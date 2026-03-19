@@ -7,7 +7,7 @@ district_id_map = {
     "Sankhuwasabha": 9, "Solukhumbu": 10, "Sunsari": 11,
     "Taplejung": 12, "Terhathum": 13, "Udayapur": 14,
     # Madhesh Province
-    "Bara": 15, "Dhanusha": 16, "Mahottari": 17, "Parsa": 18,
+    "Bara": 15, "Dhanusa": 16, "Mahottari": 17, "Parsa": 18,
     "Rautahat": 19, "Saptari": 20, "Sarlahi": 21, "Siraha": 22,
     # Bagmati Province
     "Bhaktapur": 23, "Chitwan": 24, "Dhading": 25, "Dolakha": 26,
@@ -17,7 +17,7 @@ district_id_map = {
     # Gandaki Province
     "Baglung": 36, "Gorkha": 37, "Kaski": 38, "Lamjung": 39,
     "Manag": 40, "Mustang": 41, "Myagdi": 42, "Nawalpur": 43,
-    "Parbat": 44, "Syangja": 45, "Tanahun": 46,
+    "Parbat": 44, "Syangja": 45, "Tanahu": 46,
     # Lumbini Province
     "Arghakhanchi": 47, "Banke": 48, "Bardiya": 49, "Dang": 50,
     "Eastern Rukum": 51, "Gulmi": 52, "Kapilbastu": 53,
@@ -38,16 +38,18 @@ try:
 except FileNotFoundError:
     print("Error: english.Json not found.")
     exit(1)
-addresses=[]
+addresses=set()
 skipped_district=set()
-for province,district in data.items():
-    for district,municipalities in district.items():
+for province,districts in data.items():
+    for district,municipalities in districts.items():
         if district not in district_id_map:
             skipped_district.add(district)
             continue
     for municipality,wards in municipalities.items():
         for ward in wards:
-            addresses.append((district,municipality,str(ward)))
+            addresses.add((district,municipality,str(ward)))
+
+addresses=list(addresses)
 if skipped_district:
     print(f"WARNING: These districts in english.json were not found in your map:")
     for d in sorted(skipped_district):

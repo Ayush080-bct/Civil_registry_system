@@ -1,3 +1,4 @@
+
 INSERT IGNORE INTO Address(district_id, municipality, ward, tole) VALUES(18, 'Birgunj Metropolitan City', '3', 'Tole 1');
 INSERT IGNORE INTO Address(district_id, municipality, ward, tole) VALUES(24, 'Bharatpur Metropolitan City', '6', 'Tole 2');
 INSERT IGNORE INTO Address(district_id, municipality, ward, tole) VALUES(14, 'Tapli Rural Municipality', '5', 'Tole 3');
