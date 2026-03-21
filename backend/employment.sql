@@ -1,0 +1,60 @@
+
+INSERT INTO Employment(organization, salary, person_id, profession_id) VALUES
+ 
+
+ 
+('Kathmandu Model School',          25000.00,  1,  1),
+('Patan Hospital',                  85000.00,  3,  3),
+('Manipal Hospital Pokhara',        80000.00,  4,  3),
+('Nepal Telecom Pokhara',           55000.00,  5,  2),
+('Jhapa Agriculture Office',        18000.00,  6,  5),
+('Department of Revenue',           35000.00,  7,  6),
+('Lalitpur Nursing Home',           30000.00,  8,  4),
+('Nepal Police Headquarters',       32000.00,  9,  7),
+('Chitwan Secondary School',        24000.00,  10, 1),
+('Rupandehi Road Project',          48000.00,  11, 2),
+('Pokhara Nursing Home',            28000.00,  12, 4),
+('Saptari Agriculture Office',      15000.00,  13, 5),
+('Kathmandu Law Associates',        60000.00,  15, 9),
+('Morang Secondary School',         23000.00,  16, 1),
+('Nepal Army Headquarters',         38000.00,  17, 8),
+('Kathmandu Finance Office',        40000.00,  19, 10),
+('Chitwan Hospital',                75000.00,  20, 3),
+('Dang Agriculture Cooperative',    12000.00,  21, 5),
+('Surkhet Government Office',       33000.00,  31, 6),
+('Banke Hospital',                  27000.00,  32, 4),
+('Kathmandu Press',                 29000.00,  33, 14),
+('Jhapa Transport Company',         18000.00,  35, 12),
+('Dhanusha Municipality',           31000.00,  37, 6),
+('Dhanusha Secondary School',       22000.00,  38, 1),
+('Kathmandu Construction Company',  14000.00,  39, 13),
+('Lalitpur Legal Firm',             55000.00,  40, 9),
+('Rupandehi Transport',             17000.00,  41, 12),
+('Kaski Business Center',           45000.00,  42, 11),
+('Sunsari Pharmacy',                35000.00,  43, 15),
+('Morang Cooperative Farm',         13000.00,  44, 5),
+('Surkhet Construction',            15000.00,  45, 13),
+('Kailali Government Office',       34000.00,  46, 6),
+('Kathmandu Model School',          26000.00,  47, 1),
+('Kathmandu Press',                 31000.00,  49, 14),
+('Bhaktapur Hospital',              72000.00,  50, 3),
+ 
+
+('Kathmandu Secondary School',      24000.00,  71, 1),
+('Kathmandu Hospital',              29000.00,  72, 4),
+('Lalitpur Engineering Office',     52000.00,  74, 2),
+('Lalitpur School',                 23000.00,  75, 1),
+('Chitwan Agriculture Office',      19000.00,  77, 5),
+('Chitwan Nursing Home',            27000.00,  78, 4),
+('Kaski Police Station',            33000.00,  80, 7),
+('Kaski Secondary School',          22000.00,  81, 1),
+('Rupandehi Road Department',       47000.00,  83, 2),  
+('Rupandehi Hospital',              26000.00,  84, 4),  
+
+('Kathmandu Old School',            20000.00,  86, 1),  
+('Saptari Agriculture',             10000.00,  91, 5),  
+ 
+('Kathmandu NGO Office',            38000.00,  96, 6),  
+('Kaski Business',                  42000.00,  97, 11),
+('Lalitpur Hospital',               31000.00,  98, 4);  
+ 
