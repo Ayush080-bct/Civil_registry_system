@@ -192,3 +192,11 @@ join district d on p.district_id=d.district_id
 where br.mother_id is NULL and br.father_id is NULL
 GROUP BY d.district_name
 order by orphan_count DESC;
+
+SELECT p.name,e.salary,pr.profession_name,
+    TIMESTAMPDIFF(YEAR,br.birth_date,curdate()) as age
+    FROM person p
+join birthregistration br on p.person_id=br.child_id
+join employment e on p.person_id=e.person_id
+join profession pr on e.profession_id=pr.profession_id
+HAVING age>60;
