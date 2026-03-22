@@ -8,7 +8,7 @@ CORS(app)
 # ── DB connection ──────────────────────────────────────────────
 def get_db():
     return mysql.connector.connect(
-        host="192.168.56.1",
+        host="172.22.192.1",
         user="root",
         password="",          # XAMPP default has no password
         database="civil_registry"
