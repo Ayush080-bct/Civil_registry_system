@@ -1,214 +1,432 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SQL Data Viewer</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL Data Viewer</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      padding: 32px;
-    }
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --border: #e5e7eb;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --sidebar-bg: #f8fafc;
+        --header-bg: #eff6ff;
+      }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-      padding: 24px;
-    }
-
-    .header {
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    .header p {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .search-bar {
-      margin: 20px 0 24px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .search-bar input {
-      flex: 1;
-      min-width: 240px;
-      padding: 14px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .search-bar input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-    }
-
-    .search-bar button {
-      padding: 14px 18px;
-      border: none;
-      background: #2563eb;
-      color: white;
-      border-radius: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .search-bar button:hover {
-      background: #1d4ed8;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-    }
-
-    thead {
-      background: #eff6ff;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 14px 16px;
-      border-bottom: 1px solid #e5e7eb;
-      font-size: 14px;
-    }
-
-    th {
-      color: #1e3a8a;
-      font-weight: 700;
-    }
-
-    tbody tr:hover {
-      background: #f9fafb;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 24px;
-      color: #6b7280;
-      display: none;
-    }
-
-    @media (max-width: 768px) {
       body {
-        padding: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        padding: 24px;
       }
 
-      .container {
-        padding: 18px;
+      .app {
+        max-width: 1400px;
+        height: calc(100vh - 48px);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        background: var(--panel);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border);
       }
 
-      .header h1 {
-        font-size: 22px;
+      .sidebar {
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        gap: 18px;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>SQL Data Viewer</h1>
-      <p>Search and browse rows returned from your SQL database.</p>
+
+      .brand h1 {
+        font-size: 24px;
+        margin-bottom: 6px;
+      }
+
+      .brand p {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .table-list-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .table-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+      }
+
+      .table-item {
+        width: 100%;
+        text-align: left;
+        border: 1px solid transparent;
+        background: #ffffff;
+        color: var(--text);
+        border-radius: 12px;
+        padding: 14px 16px;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .table-item:hover {
+        border-color: #bfdbfe;
+        background: #eff6ff;
+      }
+
+      .table-item.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .table-item small {
+        display: block;
+        margin-top: 4px;
+        opacity: 0.8;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+
+      .content-title h2 {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .content-title p {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .search-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .search-bar input {
+        width: 320px;
+        max-width: 100%;
+        padding: 13px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+        background: white;
+      }
+
+      .search-bar input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+      }
+
+      .search-bar button {
+        padding: 13px 18px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        border-radius: 10px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .search-bar button:hover {
+        background: var(--primary-hover);
+      }
+
+      .table-section {
+        padding: 24px;
+        overflow: auto;
+        flex: 1;
+      }
+
+      .table-wrapper {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        background: white;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      thead {
+        background: var(--header-bg);
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      th {
+        color: #1e3a8a;
+        font-weight: 700;
+      }
+
+      tbody tr:hover {
+        background: #f9fafb;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 28px;
+        color: var(--muted);
+        display: none;
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        margin-top: 18px;
+        background: #fafafa;
+      }
+
+      .backend-note {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 960px) {
+        body {
+          padding: 12px;
+        }
+
+        .app {
+          grid-template-columns: 1fr;
+          height: auto;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .search-bar input {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <h1>Database Viewer</h1>
+          <p>Select a table on the left to view its rows on the right.</p>
+        </div>
+
+        <div>
+          <div class="table-list-label">Tables</div>
+        </div>
+
+        <div class="table-list" id="tableList"></div>
+      </aside>
+
+      <main class="content">
+        <div class="content-header">
+          <div class="content-title">
+            <h2 id="tableTitle">Users</h2>
+            <p id="tableDescription">Viewing rows for the selected table.</p>
+          </div>
+
+          <div class="search-bar">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search visible rows..."
+            />
+            <button type="button" onclick="filterTable()">Search</button>
+          </div>
+        </div>
+
+        <section class="table-section">
+          <div class="table-wrapper">
+            <table id="dataTable">
+              <thead id="tableHead"></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            No matching records found.
+          </div>
+
+          <!-- <div class="backend-note">
+          <strong>Flask-ready structure:</strong> the sample data is stored in a JavaScript object now, but you can later replace <code>dbData</code> with data fetched from a Flask endpoint such as <code>/api/tables</code> and <code>/api/table/&lt;name&gt;</code>.
+        </div> -->
+        </section>
+      </main>
     </div>
 
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search by name, email, role, or any visible value..." />
-      <button onclick="filterTable()">Search</button>
-    </div>
+    <script>
+      // Temporary mock data.
+      // Later, replace this with fetch() calls to your Flask backend.
+      const dbData = {
+        users: {
+          label: "Users",
+          description: "Application users and their account status.",
+          columns: ["ID", "Name", "Email", "Role", "Status"],
+          rows: [
+            [1, "Alice Johnson", "alice@example.com", "Admin", "Active"],
+            [2, "Brian Lee", "brian@example.com", "Analyst", "Inactive"],
+            [3, "Carla Smith", "carla@example.com", "Developer", "Active"],
+            [4, "David Kumar", "david@example.com", "Manager", "Pending"],
+          ],
+        },
+        orders: {
+          label: "Orders",
+          description: "Recent order records from the system.",
+          columns: ["Order ID", "Customer", "Product", "Amount", "Status"],
+          rows: [
+            [1001, "Alice Johnson", "Laptop", "$1,250", "Shipped"],
+            [1002, "Brian Lee", "Monitor", "$320", "Processing"],
+            [1003, "Carla Smith", "Keyboard", "$89", "Delivered"],
+            [1004, "David Kumar", "Mouse", "$45", "Cancelled"],
+          ],
+        },
+        products: {
+          label: "Products",
+          description: "Catalog items available in inventory.",
+          columns: ["Product ID", "Name", "Category", "Price", "Stock"],
+          rows: [
+            [501, "Laptop", "Electronics", "$1,250", 14],
+            [502, "Monitor", "Electronics", "$320", 22],
+            [503, "Keyboard", "Accessories", "$89", 50],
+            [504, "Mouse", "Accessories", "$45", 67],
+          ],
+        },
+      };
 
-    <div class="table-wrapper">
-      <table id="dataTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Alice Johnson</td>
-            <td>alice@example.com</td>
-            <td>Admin</td>
-            <td>Active</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Brian Lee</td>
-            <td>brian@example.com</td>
-            <td>Analyst</td>
-            <td>Inactive</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Carla Smith</td>
-            <td>carla@example.com</td>
-            <td>Developer</td>
-            <td>Active</td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>David Kumar</td>
-            <td>david@example.com</td>
-            <td>Manager</td>
-            <td>Pending</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="empty-state" id="emptyState">No matching records found.</div>
-    </div>
-  </div>
+      let activeTable = "users";
 
-  <script>
-    function filterTable() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const rows = document.querySelectorAll('#dataTable tbody tr');
-      const emptyState = document.getElementById('emptyState');
-      let visibleCount = 0;
+      function renderTableList() {
+        const tableList = document.getElementById("tableList");
+        tableList.innerHTML = "";
 
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const match = text.includes(input);
-        row.style.display = match ? '' : 'none';
-        if (match) visibleCount++;
-      });
+        Object.entries(dbData).forEach(([key, table]) => {
+          const button = document.createElement("button");
+          button.className = `table-item ${key === activeTable ? "active" : ""}`;
+          button.innerHTML = `${table.label}<small>${table.rows.length} rows</small>`;
+          button.onclick = () => switchTable(key);
+          tableList.appendChild(button);
+        });
+      }
 
-      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
+      function renderActiveTable() {
+        const table = dbData[activeTable];
+        const tableTitle = document.getElementById("tableTitle");
+        const tableDescription = document.getElementById("tableDescription");
+        const tableHead = document.getElementById("tableHead");
+        const tableBody = document.getElementById("tableBody");
+        const searchInput = document.getElementById("searchInput");
+        const emptyState = document.getElementById("emptyState");
 
-    document.getElementById('searchInput').addEventListener('keyup', filterTable);
-  </script>
-</body>
+        tableTitle.textContent = table.label;
+        tableDescription.textContent = table.description;
+        searchInput.value = "";
+        emptyState.style.display = "none";
+
+        tableHead.innerHTML = `<tr>${table.columns.map((column) => `<th>${column}</th>`).join("")}</tr>`;
+        tableBody.innerHTML = table.rows
+          .map(
+            (row) =>
+              `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`,
+          )
+          .join("");
+      }
+
+      function switchTable(tableName) {
+        activeTable = tableName;
+        renderTableList();
+        renderActiveTable();
+      }
+
+      function filterTable() {
+        const input = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const rows = document.querySelectorAll("#tableBody tr");
+        const emptyState = document.getElementById("emptyState");
+        let visibleCount = 0;
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          const match = text.includes(input);
+          row.style.display = match ? "" : "none";
+          if (match) visibleCount++;
+        });
+
+        emptyState.style.display = visibleCount === 0 ? "block" : "none";
+      }
+
+      document
+        .getElementById("searchInput")
+        .addEventListener("keyup", filterTable);
+
+      // Example Flask integration for later:
+      // async function loadTables() {
+      //   const response = await fetch('/api/tables');
+      //   const tables = await response.json();
+      // }
+      //
+      // async function loadTableData(tableName) {
+      //   const response = await fetch(`/api/table/${tableName}`);
+      //   const table = await response.json();
+      // }
+
+      renderTableList();
+      renderActiveTable();
+    </script>
+  </body>
 </html>
