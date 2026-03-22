@@ -10,12 +10,12 @@ Implemented:
 - Core schema in backend/project.sql
 - Nepal district seed inserts in backend/District_data.sql
 - ER and modeling diagrams in docs/
+- Frontend layer in frontend/ (currently empty)
 
 Not implemented yet:
 - Query set in backend/queries.sql (currently empty)
 - Index tuning in backend/indexing.sql (currently empty)
 - API/server logic in server/main.py (currently empty)
-- Frontend layer in frontend/ (currently empty)
 
 ## Database Schema (9 Tables)
 
