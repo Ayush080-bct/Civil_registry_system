@@ -10,7 +10,7 @@ Implemented:
 - Core schema in backend/project.sql
 - Nepal district seed inserts in backend/District_data.sql
 - ER and modeling diagrams in docs/
-- Frontend layer in frontend/ (currently empty)
+- Frontend layer in frontend/ 
 
 Not implemented yet:
 - Query set in backend/queries.sql (currently empty)
