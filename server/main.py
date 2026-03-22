@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-# ── DB connection ──────────────────────────────────────────────
+# DB connection 
 def get_db():
     return mysql.connector.connect(
         host="172.22.192.1",
@@ -23,16 +23,15 @@ def query(sql, params=None):
     conn.close()
     return rows
 
-# ── helpers ────────────────────────────────────────────────────
+# helpers
 def ok(data):
     return jsonify({"status": "success", "count": len(data), "data": data})
 
 def err(msg, code=500):
     return jsonify({"status": "error", "message": msg}), code
 
-# ══════════════════════════════════════════════════════════════
 #  1. DISTRICT
-# ══════════════════════════════════════════════════════════════
+
 @app.route("/districts", methods=["GET"])
 def get_districts():
     """
@@ -59,9 +58,7 @@ def get_district(district_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  2. ADDRESS
-# ══════════════════════════════════════════════════════════════
 @app.route("/addresses", methods=["GET"])
 def get_addresses():
     """
@@ -103,9 +100,7 @@ def get_address(address_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  3. PERSON
-# ══════════════════════════════════════════════════════════════
 @app.route("/persons", methods=["GET"])
 def get_persons():
     """
@@ -170,9 +165,7 @@ def get_person(person_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  4. PROFESSION
-# ══════════════════════════════════════════════════════════════
 @app.route("/professions", methods=["GET"])
 def get_professions():
     try:
@@ -191,9 +184,7 @@ def get_profession(profession_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  5. EMPLOYMENT
-# ══════════════════════════════════════════════════════════════
 @app.route("/employment", methods=["GET"])
 def get_employment():
     """
@@ -255,9 +246,7 @@ def get_employment_by_id(emp_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  6. EDUCATION
-# ══════════════════════════════════════════════════════════════
 @app.route("/education", methods=["GET"])
 def get_education():
     """
@@ -308,9 +297,7 @@ def get_education_by_id(education_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  7. BIRTH REGISTRATION
-# ══════════════════════════════════════════════════════════════
 @app.route("/births", methods=["GET"])
 def get_births():
     """
@@ -367,9 +354,7 @@ def get_birth(birth_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  8. MARRIAGE REGISTRATION
-# ══════════════════════════════════════════════════════════════
 @app.route("/marriages", methods=["GET"])
 def get_marriages():
     """
@@ -418,9 +403,7 @@ def get_marriage(marriage_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 #  9. PARENT-CHILD
-# ══════════════════════════════════════════════════════════════
 @app.route("/parentchild", methods=["GET"])
 def get_parentchild():
     """
@@ -486,9 +469,7 @@ def get_parentchild_by_id(relation_id):
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
-#  ANALYTICS ENDPOINTS  (bonus — from your queries.sql)
-# ══════════════════════════════════════════════════════════════
+#  ANALYTICS ENDPOINTS
 @app.route("/analytics/gender-count", methods=["GET"])
 def gender_count():
     try:
@@ -591,6 +572,5 @@ def remarried():
     except Error as e:
         return err(str(e))
 
-# ══════════════════════════════════════════════════════════════
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
