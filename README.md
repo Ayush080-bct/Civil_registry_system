@@ -92,7 +92,7 @@ Relationship flow:
 4. Optionally add indexes in backend/indexing.sql as the query workload grows.
 5. Add and test queries in backend/queries.sql.
 
-## How Others Can Run This (Simple)
+## How Others Can Run This (Simple)[text](frontend)
 
 Prerequisites:
 - MySQL Server 8.0+ installed

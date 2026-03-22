@@ -23,7 +23,6 @@ INSERT INTO MarriageRegistration(marriage_date, ward_office, person1_id, person2
 ('1968-05-10', 'Kathmandu Ward 10 Office',  86,  87),
 ('1975-09-22', 'Bhaktapur Ward 1 Office',   90,  95),
 
--
 ('2012-06-15', 'Kathmandu Ward 10 Office',   9,  24),
 ('2019-03-20', 'Kathmandu Ward 10 Office',   9,  34),
 
