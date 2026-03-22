@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQL Data Viewer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+      padding: 32px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .search-bar {
+      margin: 20px 0 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-bar input {
+      flex: 1;
+      min-width: 240px;
+      padding: 14px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-bar input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .search-bar button {
+      padding: 14px 18px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .search-bar button:hover {
+      background: #1d4ed8;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    thead {
+      background: #eff6ff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    th {
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: #6b7280;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      .container {
+        padding: 18px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>SQL Data Viewer</h1>
+      <p>Search and browse rows returned from your SQL database.</p>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by name, email, role, or any visible value..." />
+      <button onclick="filterTable()">Search</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Alice Johnson</td>
+            <td>alice@example.com</td>
+            <td>Admin</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Brian Lee</td>
+            <td>brian@example.com</td>
+            <td>Analyst</td>
+            <td>Inactive</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Carla Smith</td>
+            <td>carla@example.com</td>
+            <td>Developer</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>David Kumar</td>
+            <td>david@example.com</td>
+            <td>Manager</td>
+            <td>Pending</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="empty-state" id="emptyState">No matching records found.</div>
+    </div>
+  </div>
+
+  <script>
+    function filterTable() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#dataTable tbody tr');
+      const emptyState = document.getElementById('emptyState');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const match = text.includes(input);
+        row.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+
+      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    document.getElementById('searchInput').addEventListener('keyup', filterTable);
+  </script>
+</body>
+</html>
