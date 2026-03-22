@@ -9,16 +9,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0e0f0c;
-      --bg2:       #161713;
-      --bg3:       #1e1f1a;
-      --border:    #2a2b25;
-      --accent:    #c8a84b;
-      --accent2:   #e8c96a;
-      --text:      #e8e6df;
-      --muted:     #7a7870;
-      --danger:    #c05a3a;
-      --success:   #4a9b6f;
+      --bg:        #1f2328;
+      --bg2:       #262b31;
+      --bg3:       #2f353d;
+      --border:    #3a414b;
+      --accent:    #90a4b4;
+      --accent2:   #a4b4c1;
+      --text:      #e5e9ee;
+      --muted:     #a0a9b3;
+      --danger:    #bf8a84;
+      --success:   #7fa590;
       --radius:    10px;
       --font-head: 'Playfair Display', serif;
       --font-body: 'DM Sans', sans-serif;
@@ -97,7 +97,7 @@
     }
 
     .nav-item:hover { background: var(--bg3); color: var(--text); }
-    .nav-item.active { background: rgba(200,168,75,0.12); color: var(--accent); font-weight: 500; }
+    .nav-item.active { background: rgba(144,164,180,0.12); color: #dde4ea; font-weight: 500; }
 
     .nav-item .icon {
       width: 16px;
@@ -306,12 +306,12 @@
 
     td {
       padding: 11px 16px;
-      border-bottom: 1px solid rgba(42,43,37,0.6);
+      border-bottom: 1px solid rgba(54,59,68,0.6);
       font-size: 13px;
       color: var(--text);
     }
 
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
     tbody tr:last-child td { border-bottom: none; }
 
     .badge {
@@ -323,12 +323,12 @@
       letter-spacing: 0.04em;
     }
 
-    .badge-M { background: rgba(74,155,111,0.15); color: #6dc897; }
-    .badge-F { background: rgba(192,90,58,0.15); color: #e07a5f; }
-    .badge-O { background: rgba(200,168,75,0.15); color: var(--accent); }
+    .badge-M { background: rgba(127,165,144,0.16); color: #c6ddd0; }
+    .badge-F { background: rgba(191,138,132,0.16); color: #e6c9c4; }
+    .badge-O { background: rgba(144,164,180,0.16); color: #dbe3ea; }
 
-    .badge-yes { background: rgba(74,155,111,0.15); color: #6dc897; }
-    .badge-no  { background: rgba(200,168,75,0.15); color: var(--accent); }
+    .badge-yes { background: rgba(127,165,144,0.15); color: #c6ddd0; }
+    .badge-no  { background: rgba(144,164,180,0.16); color: #dbe3ea; }
 
     .mono { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
 
@@ -360,7 +360,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 8px 0;
-      border-bottom: 1px solid rgba(42,43,37,0.5);
+      border-bottom: 1px solid rgba(54,59,68,0.55);
       font-size: 13px;
     }
 
@@ -441,6 +441,32 @@
 
     .salary-stat .sl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
     .salary-stat .sv { font-family: var(--font-head); font-size: 22px; color: var(--accent); }
+
+    @media (max-width: 920px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        min-height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .topbar, .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .stat-grid, .analytics-grid, .salary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -455,45 +481,45 @@
     </div>
 
     <div class="nav-section">Records</div>
-    <button class="nav-item active" onclick="showSection('persons')">
+    <button class="nav-item active" onclick="showSection('persons', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="4"/><path d="M5.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/></svg>
       Persons
     </button>
-    <button class="nav-item" onclick="showSection('employment')">
+    <button class="nav-item" onclick="showSection('employment', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       Employment
     </button>
-    <button class="nav-item" onclick="showSection('education')">
+    <button class="nav-item" onclick="showSection('education', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
       Education
     </button>
 
     <div class="nav-section">Registrations</div>
-    <button class="nav-item" onclick="showSection('births')">
+    <button class="nav-item" onclick="showSection('births', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
       Birth Records
     </button>
-    <button class="nav-item" onclick="showSection('marriages')">
+    <button class="nav-item" onclick="showSection('marriages', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z"/></svg>
       Marriages
     </button>
-    <button class="nav-item" onclick="showSection('parentchild')">
+    <button class="nav-item" onclick="showSection('parentchild', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Family Links
     </button>
 
     <div class="nav-section">Reference</div>
-    <button class="nav-item" onclick="showSection('districts')">
+    <button class="nav-item" onclick="showSection('districts', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
       Districts
     </button>
-    <button class="nav-item" onclick="showSection('professions')">
+    <button class="nav-item" onclick="showSection('professions', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Professions
     </button>
 
     <div class="nav-section">Insights</div>
-    <button class="nav-item" onclick="showSection('analytics')">
+    <button class="nav-item" onclick="showSection('analytics', this)">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Analytics
     </button>
@@ -884,7 +910,7 @@
 </div>
 
 <script>
-const API = 'http://localhost:5000';
+const API = window.location.origin;
 
 // ── API call helper ──────────────────────────────────
 async function apiFetch(path) {
@@ -895,12 +921,15 @@ async function apiFetch(path) {
 
 // ── Connection check ─────────────────────────────────
 async function checkApi() {
+  const dot = document.getElementById('api-dot');
+  const status = document.getElementById('api-status');
   try {
-    await apiFetch('/districts?province=Bagmati Province');
-    document.getElementById('api-dot').classList.add('connected');
-    document.getElementById('api-status').textContent = 'API connected';
+    await apiFetch('/health');
+    dot.classList.add('connected');
+    status.textContent = 'API connected';
   } catch {
-    document.getElementById('api-status').textContent = 'API offline';
+    dot.classList.remove('connected');
+    status.textContent = 'API offline';
   }
 }
 
@@ -917,11 +946,11 @@ const titles = {
   analytics:   ['Analytics',            'GET /analytics/*'],
 };
 
-function showSection(name) {
+function showSection(name, buttonEl) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if (buttonEl) buttonEl.classList.add('active');
   document.getElementById('page-title').textContent = titles[name][0];
   document.getElementById('page-meta').textContent  = titles[name][1];
 
@@ -955,7 +984,7 @@ function setCount(countId, n) {
 }
 
 function nullCell(v) {
-  return v ? v : `<span style="color:var(--muted);font-style:italic">—</span>`;
+  return v === null || v === undefined || v === '' ? `<span style="color:var(--muted);font-style:italic">—</span>` : v;
 }
 
 function genderBadge(g) {
@@ -963,7 +992,7 @@ function genderBadge(g) {
 }
 
 function formatSalary(s) {
-  return s ? 'NPR ' + Number(s).toLocaleString() : nullCell(null);
+  return s === null || s === undefined || s === '' ? nullCell(null) : 'NPR ' + Number(s).toLocaleString();
 }
 
 // ── PERSONS ─────────────────────────────────────────
@@ -1214,6 +1243,7 @@ async function loadProfessions() {
     const res = await apiFetch('/professions');
     const rows = res.data;
     setCount('professions-count', rows.length);
+    if (!rows.length) { setEmpty('professions-body'); return; }
     document.getElementById('professions-body').innerHTML = rows.map(r => `
       <tr>
         <td class="mono">${r.profession_id}</td>
@@ -1239,7 +1269,8 @@ async function loadGender() {
   try {
     const res = await apiFetch('/analytics/gender-count');
     const rows = res.data;
-    const total = rows.reduce((s, r) => s + r.total, 0);
+    if (!rows.length) { document.getElementById('ana-gender').innerHTML = '<div class="empty">No data available</div>'; return; }
+    const total = rows.reduce((s, r) => s + r.total, 0) || 1;
     const labels = { M: 'Male', F: 'Female', O: 'Other' };
     document.getElementById('ana-gender').innerHTML = rows.map(r => `
       <div class="ana-row">
@@ -1256,6 +1287,7 @@ async function loadSalaryStats() {
   try {
     const res = await apiFetch('/analytics/salary-stats');
     const r = res.data[0];
+    if (!r) { document.getElementById('ana-salary').innerHTML = '<div class="empty">No data available</div>'; return; }
     document.getElementById('ana-salary').innerHTML = `
       <div class="salary-grid">
         <div class="salary-stat"><div class="sl">Average</div><div class="sv">NPR ${Math.round(r.avg_salary).toLocaleString()}</div></div>
@@ -1270,7 +1302,8 @@ async function loadAgeGroups() {
   try {
     const res = await apiFetch('/analytics/age-groups');
     const rows = res.data;
-    const max = Math.max(...rows.map(r => r.total));
+    if (!rows.length) { document.getElementById('ana-province').innerHTML = '<div class="empty">No data available</div>'; return; }
+    const max = Math.max(...rows.map(r => r.total), 1);
     document.getElementById('ana-age').innerHTML = rows.map(r => `
       <div class="ana-row">
         <span>${r.age_group} years</span>
@@ -1286,7 +1319,8 @@ async function loadProvincePopulation() {
   try {
     const res = await apiFetch('/analytics/province-population');
     const rows = res.data;
-    const max = Math.max(...rows.map(r => r.total));
+    if (!rows.length) { document.getElementById('ana-province').innerHTML = '<div class="empty">No data available</div>'; return; }
+    const max = Math.max(...rows.map(r => r.total), 1);
     document.getElementById('ana-province').innerHTML = rows.map(r => `
       <div class="ana-row">
         <span>${r.province}</span>
