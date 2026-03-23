@@ -692,5 +692,115 @@ def search_full(person_id):
     except Error as e:
         return err(str(e))
 
+
+
+# ── NEW ANALYTICS ENDPOINTS ──────────────────────────────
+
+# Educated but unemployed
+@app.route("/analytics/educated-unemployed", methods=["GET"])
+def educated_unemployed():
+    try:
+        rows = query("""
+            SELECT p.name, p.gender, d.district_name,
+                   MAX(ed.level) AS highest_education
+            FROM person p
+            JOIN education ed ON p.person_id = ed.person_id
+            LEFT JOIN employment e ON p.person_id = e.person_id
+            LEFT JOIN district d ON p.district_id = d.district_id
+            WHERE e.emp_id IS NULL
+            GROUP BY p.person_id, p.name, p.gender, d.district_name
+            ORDER BY p.name
+        """)
+        return ok(rows)
+    except Error as e:
+        return err(str(e))
+
+# Orphan count per district
+@app.route("/analytics/orphans-by-district", methods=["GET"])
+def orphans_by_district():
+    try:
+        rows = query("""
+            SELECT d.district_name, COUNT(br.child_id) AS orphan_count
+            FROM birthregistration br
+            JOIN person p ON br.child_id = p.person_id
+            JOIN district d ON p.district_id = d.district_id
+            WHERE br.mother_id IS NULL AND br.father_id IS NULL
+            GROUP BY d.district_name
+            ORDER BY orphan_count DESC
+        """)
+        return ok(rows)
+    except Error as e:
+        return err(str(e))
+
+# Persons earning above average salary
+@app.route("/analytics/above-average-salary", methods=["GET"])
+def above_average_salary():
+    try:
+        rows = query("""
+            SELECT p.name, p.gender, e.salary,
+                   pr.profession_name, d.district_name
+            FROM person p
+            JOIN employment e ON p.person_id = e.person_id
+            JOIN profession pr ON e.profession_id = pr.profession_id
+            LEFT JOIN district d ON p.district_id = d.district_id
+            WHERE e.salary > (SELECT AVG(salary) FROM employment)
+            ORDER BY e.salary DESC
+        """)
+        return ok(rows)
+    except Error as e:
+        return err(str(e))
+
+# Uneducated persons
+@app.route("/analytics/uneducated", methods=["GET"])
+def uneducated():
+    try:
+        rows = query("""
+            SELECT p.name, p.gender, d.district_name
+            FROM person p
+            LEFT JOIN education ed ON p.person_id = ed.person_id
+            LEFT JOIN district d ON p.district_id = d.district_id
+            WHERE ed.education_id IS NULL
+            ORDER BY p.name
+        """)
+        return ok(rows)
+    except Error as e:
+        return err(str(e))
+
+# Guardians (non-biological parent-child)
+@app.route("/analytics/guardians", methods=["GET"])
+def guardians():
+    try:
+        rows = query("""
+            SELECT child.name AS child_name,
+                   guard.name AS guardian_name,
+                   pc.relation_type
+            FROM parentchild pc
+            JOIN person child ON pc.child_id  = child.person_id
+            JOIN person guard ON pc.parent_id = guard.person_id
+            WHERE pc.is_biological = FALSE
+            ORDER BY child.name
+        """)
+        return ok(rows)
+    except Error as e:
+        return err(str(e))
+
+# Profession employment count
+@app.route("/analytics/profession-stats", methods=["GET"])
+def profession_stats():
+    try:
+        rows = query("""
+            SELECT pr.profession_name,
+                   COUNT(e.emp_id)       AS employed,
+                   ROUND(AVG(e.salary),0) AS avg_salary,
+                   MAX(e.salary)          AS max_salary,
+                   MIN(e.salary)          AS min_salary
+            FROM profession pr
+            LEFT JOIN employment e ON pr.profession_id = e.profession_id
+            GROUP BY pr.profession_name
+            ORDER BY employed DESC
+        """)
+        return ok(rows)
+    except Error as e:
+        return err(str(e))
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

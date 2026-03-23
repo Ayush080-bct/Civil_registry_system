@@ -1270,6 +1270,54 @@
                 </div>
               </div>
 
+              <!-- NEW: Educated but unemployed -->
+              <div class="ana-card">
+                <div class="ana-card-head">Educated but unemployed</div>
+                <div class="ana-card-body" id="ana-edu-unemployed">
+                  <div class="loading"><div class="spinner"></div>Loading...</div>
+                </div>
+              </div>
+
+              <!-- NEW: Orphans per district -->
+              <div class="ana-card">
+                <div class="ana-card-head">Orphans per district</div>
+                <div class="ana-card-body" id="ana-orphans-district">
+                  <div class="loading"><div class="spinner"></div>Loading...</div>
+                </div>
+              </div>
+
+              <!-- NEW: Uneducated persons -->
+              <div class="ana-card">
+                <div class="ana-card-head">Uneducated persons</div>
+                <div class="ana-card-body" id="ana-uneducated">
+                  <div class="loading"><div class="spinner"></div>Loading...</div>
+                </div>
+              </div>
+
+              <!-- NEW: Guardians -->
+              <div class="ana-card">
+                <div class="ana-card-head">Guardian relationships</div>
+                <div class="ana-card-body" id="ana-guardians">
+                  <div class="loading"><div class="spinner"></div>Loading...</div>
+                </div>
+              </div>
+
+              <!-- NEW: Above average salary — full width -->
+              <div class="ana-card" style="grid-column: 1 / -1">
+                <div class="ana-card-head">Persons earning above average salary</div>
+                <div class="ana-card-body" id="ana-above-avg">
+                  <div class="loading"><div class="spinner"></div>Loading...</div>
+                </div>
+              </div>
+
+              <!-- NEW: Profession stats table — full width -->
+              <div class="ana-card" style="grid-column: 1 / -1">
+                <div class="ana-card-head">Profession employment statistics</div>
+                <div class="ana-card-body" id="ana-profession-stats" style="padding:0">
+                  <div class="loading"><div class="spinner"></div>Loading...</div>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -1754,6 +1802,13 @@
         // ADDED: load two charts
         loadSalaryChart();
         loadAgeChart();
+        // NEW: 6 additional analytics
+        loadEducatedUnemployed();
+        loadOrphansByDistrict();
+        loadUneducated();
+        loadGuardians();
+        loadAboveAvgSalary();
+        loadProfessionStats();
       }
 
       async function loadGender() {
@@ -2159,6 +2214,163 @@
         document.getElementById("s-municipality").value = "";
         document.getElementById("search-results").innerHTML  = "";
         document.getElementById("profile-panel").style.display = "none";
+      }
+
+      // ── NEW ANALYTICS FUNCTIONS ──────────────────────────
+
+      async function loadEducatedUnemployed() {
+        try {
+          const res  = await apiFetch("/analytics/educated-unemployed");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-edu-unemployed").innerHTML =
+              '<div class="empty">No records</div>'; return;
+          }
+          const max = Math.max(...rows.map(r => 1), 1);
+          document.getElementById("ana-edu-unemployed").innerHTML = rows.map(r => `
+            <div class="ana-row">
+              <span>${r.name}</span>
+              <span style="display:flex;gap:8px;align-items:center">
+                <span style="font-size:11px;color:var(--muted)">${r.highest_education||"—"}</span>
+                <span class="badge badge-${r.gender}">${r.gender==="M"?"Male":r.gender==="F"?"Female":"Other"}</span>
+              </span>
+            </div>`).join("");
+        } catch {
+          document.getElementById("ana-edu-unemployed").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadOrphansByDistrict() {
+        try {
+          const res  = await apiFetch("/analytics/orphans-by-district");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-orphans-district").innerHTML =
+              '<div class="empty">No orphan records</div>'; return;
+          }
+          const max = Math.max(...rows.map(r => r.orphan_count), 1);
+          document.getElementById("ana-orphans-district").innerHTML = rows.map(r => `
+            <div class="ana-row">
+              <span>${r.district_name}</span>
+              <span class="aval">${r.orphan_count}</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-bg">
+                <div class="bar-fill" style="width:${Math.round((r.orphan_count/max)*100)}%"></div>
+              </div>
+            </div>`).join("");
+        } catch {
+          document.getElementById("ana-orphans-district").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadUneducated() {
+        try {
+          const res  = await apiFetch("/analytics/uneducated");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-uneducated").innerHTML =
+              '<div class="empty">Everyone has education records!</div>'; return;
+          }
+          document.getElementById("ana-uneducated").innerHTML = rows.map(r => `
+            <div class="ana-row">
+              <span>${r.name}</span>
+              <span style="display:flex;gap:8px;align-items:center">
+                <span style="font-size:11px;color:var(--muted)">${r.district_name||"—"}</span>
+                <span class="badge badge-${r.gender}">${r.gender==="M"?"M":r.gender==="F"?"F":"O"}</span>
+              </span>
+            </div>`).join("");
+        } catch {
+          document.getElementById("ana-uneducated").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadGuardians() {
+        try {
+          const res  = await apiFetch("/analytics/guardians");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-guardians").innerHTML =
+              '<div class="empty">No guardian records</div>'; return;
+          }
+          document.getElementById("ana-guardians").innerHTML = rows.map(r => `
+            <div class="ana-row">
+              <span>${r.child_name}</span>
+              <span style="display:flex;gap:6px;align-items:center">
+                <span style="font-size:11px;color:var(--muted)">${r.relation_type}</span>
+                <span style="font-size:12px">${r.guardian_name}</span>
+              </span>
+            </div>`).join("");
+        } catch {
+          document.getElementById("ana-guardians").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadAboveAvgSalary() {
+        try {
+          const res  = await apiFetch("/analytics/above-average-salary");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-above-avg").innerHTML =
+              '<div class="empty">No records</div>'; return;
+          }
+          document.getElementById("ana-above-avg").innerHTML = `
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">
+              ${rows.map(r => `
+                <div style="background:var(--bg3);border-radius:8px;padding:10px 14px">
+                  <div style="font-size:13px">${r.name}</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                    ${r.profession_name} · ${r.district_name||"—"}
+                  </div>
+                  <div style="font-size:13px;color:var(--success);margin-top:4px">
+                    NPR ${Number(r.salary).toLocaleString()}
+                  </div>
+                </div>`).join("")}
+            </div>`;
+        } catch {
+          document.getElementById("ana-above-avg").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadProfessionStats() {
+        try {
+          const res  = await apiFetch("/analytics/profession-stats");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-profession-stats").innerHTML =
+              '<div class="empty">No data</div>'; return;
+          }
+          document.getElementById("ana-profession-stats").innerHTML = `
+            <table style="width:100%;border-collapse:collapse">
+              <thead style="background:var(--bg3)">
+                <tr>
+                  <th style="padding:11px 16px;text-align:left;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Profession</th>
+                  <th style="padding:11px 16px;text-align:left;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Employed</th>
+                  <th style="padding:11px 16px;text-align:left;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Avg Salary</th>
+                  <th style="padding:11px 16px;text-align:left;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Max</th>
+                  <th style="padding:11px 16px;text-align:left;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Min</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(r => `
+                  <tr>
+                    <td style="padding:11px 16px;border-bottom:1px solid rgba(54,59,68,0.6);font-size:13px">${r.profession_name}</td>
+                    <td style="padding:11px 16px;border-bottom:1px solid rgba(54,59,68,0.6);font-size:13px;font-family:var(--font-mono);color:var(--accent)">${r.employed||0}</td>
+                    <td style="padding:11px 16px;border-bottom:1px solid rgba(54,59,68,0.6);font-size:13px;color:var(--success)">NPR ${r.avg_salary?Number(r.avg_salary).toLocaleString():"—"}</td>
+                    <td style="padding:11px 16px;border-bottom:1px solid rgba(54,59,68,0.6);font-size:12px;color:var(--muted)">NPR ${r.max_salary?Number(r.max_salary).toLocaleString():"—"}</td>
+                    <td style="padding:11px 16px;border-bottom:1px solid rgba(54,59,68,0.6);font-size:12px;color:var(--muted)">NPR ${r.min_salary?Number(r.min_salary).toLocaleString():"—"}</td>
+                  </tr>`).join("")}
+              </tbody>
+            </table>`;
+        } catch {
+          document.getElementById("ana-profession-stats").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
       }
 
       // ── INIT ────────────────────────────────────────────
