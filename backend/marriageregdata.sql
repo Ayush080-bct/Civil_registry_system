@@ -1,7 +1,7 @@
 
 
  
-INSERT IGNORE INTO MarriageRegistration(marriage_date, ward_office, person1_id, person2_id) VALUES
+INSERT INTO MarriageRegistration(marriage_date, ward_office, person1_id, person2_id) VALUES
  
 ('2006-02-14', 'Kathmandu Ward 10 Office',   1,   2),
 ('2010-05-20', 'Lalitpur Ward 3 Office',     3,   8),

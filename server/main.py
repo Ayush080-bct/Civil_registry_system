@@ -1,4 +1,4 @@
-
+from datetime import date, datetime
 from flask import Flask, jsonify, request
 import mysql.connector
 from mysql.connector import Error
@@ -22,7 +22,12 @@ def query(sql, params=None):
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return rows
+    
+    for row in rows:
+        for k, v in row.items():
+            if isinstance(v, (date, datetime)):
+                row[k] = v.strftime("%Y-%m-%d")
+    return rows  
 
 # helpers
 def ok(data):

@@ -16,3 +16,4 @@ INSERT INTO Profession(profession_name) VALUES
 ('Pharmacist'),
 ('Lab technician'),
 ('pilot');
+INSERT INTO profession(profession_name) values('Actor');--  Press Ctrl+E to run only selected lines

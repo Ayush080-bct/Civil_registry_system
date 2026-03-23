@@ -11,11 +11,11 @@ Implemented:
 - Nepal district seed inserts in backend/District_data.sql
 - ER and modeling diagrams in docs/
 - Frontend layer in frontend/ 
-
-Not implemented yet:
 - Query set in backend/queries.sql (currently empty)
 - Index tuning in backend/indexing.sql (currently empty)
 - API/server logic in server/main.py (currently empty)
+
+
 
 ## Database Schema (9 Tables)
 

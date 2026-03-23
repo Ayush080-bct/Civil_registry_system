@@ -1,5 +1,5 @@
 
-INSERT IGNORE INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
+INSERT  INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
  
 ('SLC',              'Secondary', 'Kathmandu Secondary School',       10, 1),
 ('B.Ed',             'Bachelor',  'Tribhuvan University Kirtipur',     4, 1),
@@ -110,4 +110,24 @@ INSERT IGNORE INTO Education(degree_name, level, institution_name, years_complet
 ('SLC',              'Secondary', 'Kathmandu Secondary School',         10, 96),
 ('BBS',              'Bachelor',  'Pokhara Campus',                      4, 97),
 ('B.Sc Nursing',     'Bachelor',  'Kathmandu Nursing Campus',            4, 98);
- 
+
+INSERT INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
+('SEE', 'Secondary', 'Morang Secondary School',    10, 101),
+('SEE', 'Secondary', 'Morang Secondary School',    10, 102),
+('SEE', 'Secondary', 'Morang Secondary School',    10, 103),
+('SEE', 'Secondary', 'Morang Secondary School',    10, 104),
+('SEE', 'Secondary', 'Sunsari Secondary School',   10, 105);
+
+INSERT INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
+('+2 Science', 'Secondary', 'Morang Higher Secondary School',   2, 101),
+('+2 Science', 'Secondary', 'Morang Higher Secondary School',   2, 102),
+('+2 Science', 'Secondary', 'Morang Higher Secondary School',   2, 103),
+('+2 Science', 'Secondary', 'Morang Higher Secondary School',   2, 104),
+('+2 Science', 'Secondary', 'Sunsari Higher Secondary School',  2, 105);
+
+INSERT INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
+('B.E. Computer', 'Bachelor', 'Purwanchal Campus IOE Tinkune', 2, 101),
+('B.E. Computer', 'Bachelor', 'Purwanchal Campus IOE Tinkune', 2, 102),
+('B.E. Computer', 'Bachelor', 'Purwanchal Campus IOE Tinkune', 2, 103),
+('B.E. Computer', 'Bachelor', 'Purwanchal Campus IOE Tinkune', 2, 104),
+('B.E. Computer', 'Bachelor', 'Purwanchal Campus IOE Tinkune', 2, 105);

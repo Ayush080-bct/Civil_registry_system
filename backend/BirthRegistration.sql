@@ -1,6 +1,6 @@
 
  
-INSERT IGNORE INTO BirthRegistration(birth_date, ward_office, child_id, mother_id, father_id) VALUES
+INSERT  INTO BirthRegistration(birth_date, ward_office, child_id, mother_id, father_id) VALUES
  
 
 ('1985-04-12', 'Kathmandu Ward 10 Office',   1,  NULL, NULL),
@@ -66,3 +66,9 @@ INSERT IGNORE INTO BirthRegistration(birth_date, ward_office, child_id, mother_i
 ('1995-01-30', 'Kathmandu Ward 15 Office',  99,  NULL, NULL),
 ('1991-07-08', 'Jhapa Ward 2 Office',      100,  NULL, NULL);
  
+INSERT INTO BirthRegistration(birth_date, ward_office, child_id, mother_id, father_id) VALUES
+('2005-01-01', 'Morang Ward 9 Office',  101, NULL, NULL), 
+('2004-01-01', 'Morang Ward 9 Office',  102, NULL, NULL),  
+('2005-01-01', 'Morang Ward 9 Office',  103, NULL, NULL),  
+('2004-01-01', 'Morang Ward 9 Office',  104, NULL, NULL),  
+('2003-01-01', 'Sunsari Ward 2 Office', 105, NULL, NULL);

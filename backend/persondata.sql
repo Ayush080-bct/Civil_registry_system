@@ -1,4 +1,4 @@
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Ram Bahadur Shrestha',    'M', 'KAT-0001-1985', 1,  27),
 ('Sita Devi Shrestha',      'F', 'KAT-0002-1988', 2,  27),
 ('Hari Prasad Adhikari',    'M', 'LAL-0001-1979', 3,  29),
@@ -50,7 +50,7 @@ INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id)
 ('Ashok Regmi',             'M', 'LAL-0006-1980', 3,  29),
 ('Radha Bhattarai',         'F', 'BHA-0003-1985', 4,  23);
 
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Roshan Tamang',           'M', NULL, 1,  27),
 ('Priya Shrestha',          'F', NULL, 1,  27),
 ('Aayush Gurung',           'M', NULL, 5,  38),
@@ -72,33 +72,33 @@ INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id)
 ('Bijay Chaudhary',         'M', NULL, 8,  16),
 ('Sabina Dhakal',           'F', NULL, 1,  27);
 
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Narayan Pokhrel',         'M', 'KAT-0013-1978', 12, 27),  
 ('Laxmi Devi Thapa',        'F', 'KAT-0014-1981', 12, 27),  
 ('Aakash Pokhrel',          'M', NULL,             12, 27);  
  
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Bijay Bhattarai',         'M', 'LAL-0007-1976', 13, 29),  
 ('Samjhana Dahal',          'F', 'LAL-0008-1979', 13, 29),  
 ('Nisha Bhattarai',         'F', NULL,             13, 29);  
  
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Surya Bahadur Thapa',     'M', 'CHI-0004-1980', 14, 24),  
 ('Menuka Gautam',           'F', 'CHI-0005-1983', 14, 24),  
 ('Suraj Thapa',             'M', NULL,             14, 24);  
 
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Rabindra Dahal',          'M', 'KAS-0006-1977', 15, 38),  
 ('Sirjana Silwal',          'F', 'KAS-0007-1980', 15, 38), 
 ('Pratiksha Dahal',         'F', NULL,             15, 38);  
  
 
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Tilak Prasad Gautam',     'M', 'RUP-0004-1975', 16, 58), 
 ('Pratibha Subedi',         'F', 'RUP-0005-1978', 16, 58), 
 ('Aarav Gautam',            'M', NULL,             16, 58); 
 
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Tek Bahadur Shrestha',    'M', 'KAT-0015-1945', 1,  27),
 ('Devi Maya Tamang',        'F', 'KAT-0016-1948', 2,  27),
 ('Madhav Prasad Regmi',     'M', 'LAL-0009-1950', 3,  29),
@@ -110,11 +110,22 @@ INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id)
 ('Rudra Prasad Pandey',     'M', 'MOR-0004-1953', 7,  6),
 ('Ganga Maya Thapa',        'F', 'BHA-0004-1956', 4,  23);
  
-INSERT IGNORE INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
+INSERT INTO Person(name, gender, citizenship_no, address_id, district_id) VALUES
 ('Manisha Shrestha',        'O', 'KAT-0017-1990', 1,  27),
 ('Rohan Gurung',            'O', 'KAS-0009-1993', 5,  38),
 ('Prashant Maharjan',       'O', 'LAL-0010-1988', 3,  29),
 ('Anjali Tamang',           'O', 'KAT-0018-1995', 2,  27),
 ('Bibek Rai',               'O', 'JHA-0005-1991', 7,  4);
 
-INSERT 
+INSERT INTO Person(name,gender,citizenship_no,address_id,district_id) VALUES
+('Ayush sahu','M','KAT-0200-2005',501,6);
+INSERT INTO Person(name,gender,citizenship_no,address_id,district_id) VALUES
+('Angel Khanal','M','KAT-0200-2004',502,6);
+
+INSERT INTO Person(name,gender,citizenship_no,address_id,district_id)
+values('Angel Bastola','M','KAT-0210-2005',502,6);
+INSERT INTO Person(name,gender,citizenship_no,address_id,district_id)
+values('Aakash Adhikari','M','KAT-0211-2004',503,6);
+
+INSERT INTO Person(name,gender,citizenship_no,address_id,district_id)
+values('Ayush Khanal','M','KAT-0212-2003',504,11);
