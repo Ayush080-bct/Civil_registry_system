@@ -3,430 +3,2167 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SQL Data Viewer</title>
+    <title>Civil Registry — Nepal</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- ADDED LINE 9: Chart.js for analytics charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
-      * {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
 
       :root {
-        --bg: #f4f7fb;
-        --panel: #ffffff;
-        --border: #e5e7eb;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --primary: #2563eb;
-        --primary-hover: #1d4ed8;
-        --sidebar-bg: #f8fafc;
-        --header-bg: #eff6ff;
+        --bg: #1f2328;
+        --bg2: #262b31;
+        --bg3: #2f353d;
+        --border: #3a414b;
+        --accent: #90a4b4;
+        --accent2: #a4b4c1;
+        --text: #e5e9ee;
+        --muted: #a0a9b3;
+        --danger: #bf8a84;
+        --success: #7fa590;
+        --radius: 10px;
+        --font-head: "Playfair Display", serif;
+        --font-body: "DM Sans", sans-serif;
+        --font-mono: "DM Mono", monospace;
       }
 
       body {
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: var(--font-body);
         background: var(--bg);
         color: var(--text);
-        height: 100vh;
-        padding: 24px;
+        min-height: 100vh;
+        font-size: 14px;
+        line-height: 1.6;
       }
 
-      .app {
-        max-width: 1400px;
-        height: calc(100vh - 48px);
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        background: var(--panel);
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-        border: 1px solid var(--border);
+      /* ── SIDEBAR ── */
+      .layout {
+        display: flex;
+        min-height: 100vh;
       }
 
       .sidebar {
-        background: var(--sidebar-bg);
+        width: 240px;
+        min-height: 100vh;
+        background: var(--bg2);
         border-right: 1px solid var(--border);
         display: flex;
         flex-direction: column;
-        padding: 20px;
-        gap: 18px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 100;
       }
 
-      .brand h1 {
-        font-size: 24px;
-        margin-bottom: 6px;
+      .sidebar-logo {
+        padding: 28px 20px 20px;
+        border-bottom: 1px solid var(--border);
       }
 
-      .brand p {
-        font-size: 14px;
+      .sidebar-logo .title {
+        font-family: var(--font-head);
+        font-size: 18px;
+        color: var(--accent);
+        line-height: 1.2;
+      }
+
+      .sidebar-logo .subtitle {
+        font-size: 11px;
         color: var(--muted);
-        line-height: 1.5;
-      }
-
-      .table-list-label {
-        font-size: 12px;
-        text-transform: uppercase;
+        margin-top: 4px;
         letter-spacing: 0.08em;
-        color: var(--muted);
-        font-weight: 700;
+        text-transform: uppercase;
       }
 
-      .table-list {
+      .nav-section {
+        padding: 16px 12px 8px;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        margin: 1px 8px;
+        border-radius: 7px;
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 400;
+        transition: all 0.15s ease;
+        border: none;
+        background: none;
+        width: calc(100% - 16px);
+        text-align: left;
+      }
+
+      .nav-item:hover {
+        background: var(--bg3);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: rgba(144, 164, 180, 0.12);
+        color: #dde4ea;
+        font-weight: 500;
+      }
+
+      .nav-item .icon {
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
+        flex-shrink: 0;
+      }
+
+      .nav-item.active .icon {
+        opacity: 1;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .api-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--danger);
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+      .api-dot.connected {
+        background: var(--success);
+      }
+
+      /* ── MAIN ── */
+      .main {
+        margin-left: 240px;
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        overflow-y: auto;
       }
 
-      .table-item {
-        width: 100%;
-        text-align: left;
-        border: 1px solid transparent;
-        background: #ffffff;
+      .topbar {
+        padding: 18px 32px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .topbar-title {
+        font-family: var(--font-head);
+        font-size: 22px;
         color: var(--text);
-        border-radius: 12px;
-        padding: 14px 16px;
-        cursor: pointer;
-        transition: 0.2s ease;
       }
 
-      .table-item:hover {
-        border-color: #bfdbfe;
-        background: #eff6ff;
-      }
-
-      .table-item.active {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-      }
-
-      .table-item small {
-        display: block;
-        margin-top: 4px;
-        opacity: 0.8;
+      .topbar-meta {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: var(--font-mono);
       }
 
       .content {
+        padding: 28px 32px;
+      }
+
+      /* ── STAT CARDS ── */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .stat-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--accent);
+        opacity: 0.5;
+      }
+
+      .stat-card .label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .stat-card .value {
+        font-family: var(--font-head);
+        font-size: 28px;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      .stat-card .sublabel {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      /* ── FILTER BAR ── */
+      .filter-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+
+      .filter-group {
         display: flex;
         flex-direction: column;
-        min-width: 0;
+        gap: 5px;
       }
-
-      .content-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        padding: 20px 24px;
-        border-bottom: 1px solid var(--border);
-        flex-wrap: wrap;
-      }
-
-      .content-title h2 {
-        font-size: 24px;
-        margin-bottom: 4px;
-      }
-
-      .content-title p {
+      .filter-group label {
+        font-size: 11px;
         color: var(--muted);
-        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
       }
 
-      .search-bar {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .search-bar input {
-        width: 320px;
-        max-width: 100%;
-        padding: 13px 15px;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        font-size: 15px;
-        outline: none;
-        transition:
-          border-color 0.2s ease,
-          box-shadow 0.2s ease;
-        background: white;
-      }
-
-      .search-bar input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-      }
-
-      .search-bar button {
-        padding: 13px 18px;
-        border: none;
-        background: var(--primary);
-        color: white;
-        border-radius: 10px;
-        font-size: 15px;
-        cursor: pointer;
-        transition: background 0.2s ease;
-      }
-
-      .search-bar button:hover {
-        background: var(--primary-hover);
-      }
-
-      .table-section {
-        padding: 24px;
-        overflow: auto;
-        flex: 1;
-      }
-
-      .table-wrapper {
+      input,
+      select {
+        background: var(--bg2);
         border: 1px solid var(--border);
-        border-radius: 14px;
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 7px;
+        font-family: var(--font-body);
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.15s;
+        min-width: 140px;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--accent);
+      }
+      select option {
+        background: var(--bg2);
+      }
+
+      .btn {
+        padding: 9px 18px;
+        border-radius: 7px;
+        border: none;
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.15s;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: var(--bg);
+      }
+      .btn-primary:hover {
+        background: var(--accent2);
+      }
+
+      .btn-ghost {
+        background: var(--bg3);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+
+      /* ── TABLE ── */
+      .table-wrap {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         overflow: hidden;
-        background: white;
+      }
+
+      .table-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .table-header .tname {
+        font-family: var(--font-head);
+        font-size: 15px;
+      }
+
+      .table-header .tcount {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .table-scroll {
+        overflow-x: auto;
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 720px;
+        min-width: 600px;
       }
 
       thead {
-        background: var(--header-bg);
-      }
-
-      th,
-      td {
-        text-align: left;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--border);
-        font-size: 14px;
-        white-space: nowrap;
+        background: var(--bg3);
       }
 
       th {
-        color: #1e3a8a;
-        font-weight: 700;
+        padding: 11px 16px;
+        text-align: left;
+        font-size: 11px;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+
+      td {
+        padding: 11px 16px;
+        border-bottom: 1px solid rgba(54, 59, 68, 0.6);
+        font-size: 13px;
+        color: var(--text);
       }
 
       tbody tr:hover {
-        background: #f9fafb;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
       }
 
-      .empty-state {
-        text-align: center;
-        padding: 28px;
+      .badge {
+        display: inline-block;
+        padding: 2px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+      }
+
+      .badge-M {
+        background: rgba(127, 165, 144, 0.16);
+        color: #c6ddd0;
+      }
+      .badge-F {
+        background: rgba(191, 138, 132, 0.16);
+        color: #e6c9c4;
+      }
+      .badge-O {
+        background: rgba(144, 164, 180, 0.16);
+        color: #dbe3ea;
+      }
+
+      .badge-yes {
+        background: rgba(127, 165, 144, 0.15);
+        color: #c6ddd0;
+      }
+      .badge-no {
+        background: rgba(144, 164, 180, 0.16);
+        color: #dbe3ea;
+      }
+
+      .mono {
+        font-family: var(--font-mono);
+        font-size: 12px;
         color: var(--muted);
-        display: none;
-        border: 1px dashed var(--border);
-        border-radius: 12px;
-        margin-top: 18px;
-        background: #fafafa;
       }
 
-      .backend-note {
-        margin-top: 16px;
-        padding: 14px 16px;
-        border-radius: 12px;
-        background: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        color: #475569;
+      /* ── ANALYTICS ── */
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .ana-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .ana-card-head {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        font-family: var(--font-head);
+        font-size: 15px;
+      }
+
+      .ana-card-body {
+        padding: 16px 20px;
+      }
+
+      .ana-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(54, 59, 68, 0.55);
         font-size: 13px;
-        line-height: 1.5;
       }
 
-      @media (max-width: 960px) {
-        body {
-          padding: 12px;
-        }
+      .ana-row:last-child {
+        border-bottom: none;
+      }
 
-        .app {
-          grid-template-columns: 1fr;
-          height: auto;
-        }
+      .ana-row .aval {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--accent);
+      }
 
+      .bar-wrap {
+        margin-top: 4px;
+      }
+
+      .bar-bg {
+        background: var(--bg3);
+        height: 5px;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 2px;
+      }
+
+      .bar-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 3px;
+        transition: width 0.6s ease;
+      }
+
+      /* ── LOADING / EMPTY ── */
+      .loading {
+        padding: 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin: 0 auto 12px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .empty {
+        padding: 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+
+      /* ── FADE IN ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        animation: fadeUp 0.25s ease both;
+      }
+
+      /* analytics big numbers */
+      .salary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .salary-stat {
+        background: var(--bg3);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+
+      .salary-stat .sl {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 4px;
+      }
+      .salary-stat .sv {
+        font-family: var(--font-head);
+        font-size: 22px;
+        color: var(--accent);
+      }
+
+      @media (max-width: 920px) {
         .sidebar {
-          border-right: none;
-          border-bottom: 1px solid var(--border);
+          position: static;
+          width: 100%;
+          min-height: auto;
         }
 
-        .search-bar input {
-          width: 100%;
+        .main {
+          margin-left: 0;
+        }
+
+        .layout {
+          flex-direction: column;
+        }
+
+        .topbar,
+        .content {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+
+        .stat-grid,
+        .analytics-grid,
+        .salary-grid {
+          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <div class="app">
+    <div class="layout">
+      <!-- SIDEBAR -->
       <aside class="sidebar">
-        <div class="brand">
-          <h1>Database Viewer</h1>
-          <p>Select a table on the left to view its rows on the right.</p>
+        <div class="sidebar-logo">
+          <div class="title">Civil Registry</div>
+          <div class="subtitle">Nepal — DBMS Project</div>
         </div>
 
-        <div>
-          <div class="table-list-label">Tables</div>
-        </div>
+        <div class="nav-section">Records</div>
+        <button class="nav-item active" onclick="showSection('persons', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <circle cx="12" cy="7" r="4" />
+            <path d="M5.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6" />
+          </svg>
+          Persons
+        </button>
+        <button class="nav-item" onclick="showSection('employment', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+          </svg>
+          Employment
+        </button>
+        <button class="nav-item" onclick="showSection('education', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+          </svg>
+          Education
+        </button>
 
-        <div class="table-list" id="tableList"></div>
+        <div class="nav-section">Registrations</div>
+        <button class="nav-item" onclick="showSection('births', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" />
+            <circle cx="12" cy="9" r="2.5" />
+          </svg>
+          Birth Records
+        </button>
+        <button class="nav-item" onclick="showSection('marriages', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z"
+            />
+          </svg>
+          Marriages
+        </button>
+        <button class="nav-item" onclick="showSection('parentchild', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          Family Links
+        </button>
+
+        <div class="nav-section">Reference</div>
+        <button class="nav-item" onclick="showSection('districts', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <polygon points="3 11 22 2 13 21 11 13 3 11" />
+          </svg>
+          Districts
+        </button>
+        <button class="nav-item" onclick="showSection('professions', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          Professions
+        </button>
+
+        <div class="nav-section">Insights</div>
+        <button class="nav-item" onclick="showSection('analytics', this)">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          Analytics
+        </button>
+        <!-- ADDED LINES 726-740: Search Person nav item -->
+        <button class="nav-item" onclick="showSection('search', this)">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          Search Person
+        </button>
+
+        <div class="sidebar-footer">
+          <span class="api-dot" id="api-dot"></span>
+          <span id="api-status">Connecting...</span>
+        </div>
       </aside>
 
-      <main class="content">
-        <div class="content-header">
-          <div class="content-title">
-            <h2 id="tableTitle">Users</h2>
-            <p id="tableDescription">Viewing rows for the selected table.</p>
-          </div>
-
-          <div class="search-bar">
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Search visible rows..."
-            />
-            <button type="button" onclick="filterTable()">Search</button>
-          </div>
+      <!-- MAIN -->
+      <main class="main">
+        <div class="topbar">
+          <div class="topbar-title" id="page-title">Persons</div>
+          <div class="topbar-meta" id="page-meta">GET /persons</div>
         </div>
 
-        <section class="table-section">
-          <div class="table-wrapper">
-            <table id="dataTable">
-              <thead id="tableHead"></thead>
-              <tbody id="tableBody"></tbody>
-            </table>
+        <div class="content">
+          <!-- ══ PERSONS ══ -->
+          <div class="section active fade-in" id="section-persons">
+            <div class="stat-grid" id="person-stats">
+              <div class="stat-card">
+                <div class="label">Total Persons</div>
+                <div class="value" id="stat-total">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Male</div>
+                <div class="value" id="stat-male">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Female</div>
+                <div class="value" id="stat-female">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">With Citizenship</div>
+                <div class="value" id="stat-cit">—</div>
+              </div>
+            </div>
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Gender</label>
+                <select id="f-gender">
+                  <option value="">All</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="O">Other</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Citizenship</label>
+                <select id="f-cit">
+                  <option value="">All</option>
+                  <option value="true">Has citizenship</option>
+                  <option value="false">No citizenship</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Citizenship No</label>
+                <input
+                  type="text"
+                  id="f-citizenship"
+                  placeholder="e.g. KAT-0001-1985"
+                  style="width: 180px"
+                  onkeydown="if (event.key === 'Enter') loadPersons();"
+                />
+              </div>
+              <div class="filter-group">
+                <label>District ID</label>
+                <input
+                  type="number"
+                  id="f-district"
+                  placeholder="e.g. 27"
+                  style="min-width: 100px"
+                />
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadPersons()">
+                  Search
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetPersons()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Person Records</span>
+                <span class="tcount" id="persons-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Gender</th>
+                      <th>Citizenship No.</th>
+                      <th>District</th>
+                      <th>Province</th>
+                      <th>Address</th>
+                    </tr>
+                  </thead>
+                  <tbody id="persons-body"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
-          <div class="empty-state" id="emptyState">
-            No matching records found.
+          <!-- ══ EMPLOYMENT ══ -->
+          <div class="section fade-in" id="section-employment">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Min Salary (NPR)</label>
+                <input type="number" id="f-min-sal" placeholder="e.g. 30000" />
+              </div>
+              <div class="filter-group">
+                <label>Max Salary (NPR)</label>
+                <input type="number" id="f-max-sal" placeholder="e.g. 80000" />
+              </div>
+              <div class="filter-group">
+                <label>Person ID</label>
+                <input
+                  type="number"
+                  id="f-emp-person"
+                  placeholder="e.g. 1"
+                  style="min-width: 90px"
+                />
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadEmployment()">
+                  Search
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetEmployment()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Employment Records</span>
+                <span class="tcount" id="employment-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Person</th>
+                      <th>Organization</th>
+                      <th>Profession</th>
+                      <th>Salary (NPR)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="employment-body"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
-          <!-- <div class="backend-note">
-          <strong>Flask-ready structure:</strong> the sample data is stored in a JavaScript object now, but you can later replace <code>dbData</code> with data fetched from a Flask endpoint such as <code>/api/tables</code> and <code>/api/table/&lt;name&gt;</code>.
-        </div> -->
-        </section>
+          <!-- ══ EDUCATION ══ -->
+          <div class="section fade-in" id="section-education">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Level</label>
+                <select id="f-edu-level">
+                  <option value="">All</option>
+                  <option>Primary</option>
+                  <option>Secondary</option>
+                  <option>Bachelor</option>
+                  <option>Master</option>
+                  <option>PhD</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Person ID</label>
+                <input
+                  type="number"
+                  id="f-edu-person"
+                  placeholder="e.g. 3"
+                  style="min-width: 90px"
+                />
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadEducation()">
+                  Search
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetEducation()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Education Records</span>
+                <span class="tcount" id="education-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Person</th>
+                      <th>Degree</th>
+                      <th>Level</th>
+                      <th>Institution</th>
+                      <th>Years</th>
+                    </tr>
+                  </thead>
+                  <tbody id="education-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ BIRTHS ══ -->
+          <div class="section fade-in" id="section-births">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Show</label>
+                <select id="f-orphans">
+                  <option value="">All births</option>
+                  <option value="true">Orphans only</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Child ID</label>
+                <input
+                  type="number"
+                  id="f-birth-child"
+                  placeholder="e.g. 9"
+                  style="min-width: 90px"
+                />
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadBirths()">
+                  Search
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetBirths()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Birth Registrations</span>
+                <span class="tcount" id="births-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Child</th>
+                      <th>Birth Date</th>
+                      <th>Mother</th>
+                      <th>Father</th>
+                      <th>Ward Office</th>
+                    </tr>
+                  </thead>
+                  <tbody id="births-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ MARRIAGES ══ -->
+          <div class="section fade-in" id="section-marriages">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Person ID</label>
+                <input
+                  type="number"
+                  id="f-mar-person"
+                  placeholder="e.g. 1"
+                  style="min-width: 90px"
+                />
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadMarriages()">
+                  Search
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetMarriages()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Marriage Registrations</span>
+                <span class="tcount" id="marriages-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Person 1</th>
+                      <th>Person 2</th>
+                      <th>Marriage Date</th>
+                      <th>Ward Office</th>
+                    </tr>
+                  </thead>
+                  <tbody id="marriages-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ PARENT-CHILD ══ -->
+          <div class="section fade-in" id="section-parentchild">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Relation Type</label>
+                <select id="f-relation">
+                  <option value="">All</option>
+                  <option value="father">Father</option>
+                  <option value="mother">Mother</option>
+                  <option value="guardian">Guardian</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Biological</label>
+                <select id="f-bio">
+                  <option value="">All</option>
+                  <option value="true">Biological</option>
+                  <option value="false">Non-biological</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadParentChild()">
+                  Search
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetParentChild()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Family Relationships</span>
+                <span class="tcount" id="parentchild-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Child</th>
+                      <th>Parent / Guardian</th>
+                      <th>Relation</th>
+                      <th>Biological</th>
+                    </tr>
+                  </thead>
+                  <tbody id="parentchild-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ DISTRICTS ══ -->
+          <div class="section fade-in" id="section-districts">
+            <div class="filter-bar">
+              <div class="filter-group">
+                <label>Province</label>
+                <select id="f-province">
+                  <option value="">All provinces</option>
+                  <option>Koshi Province</option>
+                  <option>Madhesh Province</option>
+                  <option>Bagmati Province</option>
+                  <option>Gandaki Province</option>
+                  <option>Lumbini Province</option>
+                  <option>Karnali Province</option>
+                  <option>Sudurpashchim Province</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadDistricts()">
+                  Filter
+                </button>
+              </div>
+              <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-ghost" onclick="resetDistricts()">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Districts of Nepal</span>
+                <span class="tcount" id="districts-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>District</th>
+                      <th>Province</th>
+                    </tr>
+                  </thead>
+                  <tbody id="districts-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ PROFESSIONS ══ -->
+          <div class="section fade-in" id="section-professions">
+            <div class="table-wrap">
+              <div class="table-header">
+                <span class="tname">Profession Lookup</span>
+                <span class="tcount" id="professions-count">—</span>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Profession Name</th>
+                    </tr>
+                  </thead>
+                  <tbody id="professions-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ ANALYTICS ══ -->
+          <div class="section fade-in" id="section-analytics">
+            <div class="analytics-grid">
+              <div class="ana-card">
+                <div class="ana-card-head">Gender distribution</div>
+                <div class="ana-card-body" id="ana-gender">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <div class="ana-card">
+                <div class="ana-card-head">Salary statistics</div>
+                <div class="ana-card-body" id="ana-salary">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <div class="ana-card">
+                <div class="ana-card-head">Age groups</div>
+                <div class="ana-card-body" id="ana-age">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <div class="ana-card">
+                <div class="ana-card-head">Province population</div>
+                <div class="ana-card-body" id="ana-province">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <div class="ana-card">
+                <div class="ana-card-head">Orphans</div>
+                <div class="ana-card-body" id="ana-orphans">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <div class="ana-card">
+                <div class="ana-card-head">Remarried persons</div>
+                <div class="ana-card-body" id="ana-remarried">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <div class="ana-card" style="grid-column: 1 / -1">
+                <div class="ana-card-head">Unemployed persons</div>
+                <div class="ana-card-body" id="ana-unemployed">
+                  <div class="loading">
+                    <div class="spinner"></div>
+                    Loading...
+                  </div>
+                </div>
+              </div>
+
+              <!-- ADDED LINES 1249-1278: Two Chart.js chart cards -->
+              <div class="ana-card">
+                <div class="ana-card-head">Avg salary per profession</div>
+                <div class="ana-card-body">
+                  <canvas id="chart-salary" height="260"></canvas>
+                </div>
+              </div>
+              <div class="ana-card">
+                <div class="ana-card-head">Population by age group</div>
+                <div class="ana-card-body">
+                  <canvas id="chart-age" height="260"></canvas>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ADDED LINES 1281-1360: Search Person section -->
+          <div class="section fade-in" id="section-search">
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;">
+                <div class="filter-group">
+                  <label>Name</label>
+                  <input type="text" id="s-name" placeholder="e.g. Ram" onkeydown="if(event.key==='Enter') doSearch()"/>
+                </div>
+                <div class="filter-group">
+                  <label>Citizenship No</label>
+                  <input type="text" id="s-citizenship" placeholder="e.g. KAT-0001-1985" onkeydown="if(event.key==='Enter') doSearch()"/>
+                </div>
+                <div class="filter-group">
+                  <label>District</label>
+                  <select id="s-district">
+                    <option value="">All Districts</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Municipality</label>
+                  <input type="text" id="s-municipality" placeholder="e.g. Kathmandu" onkeydown="if(event.key==='Enter') doSearch()"/>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-primary" onclick="doSearch()">Search</button>
+                <button class="btn btn-ghost" onclick="resetSearch()">Reset</button>
+              </div>
+            </div>
+            <div id="search-results"></div>
+            <div id="profile-panel" style="display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+              <div id="profile-content"></div>
+            </div>
+          </div>
+        </div>
+        <!-- /content -->
       </main>
     </div>
 
     <script>
-      // Temporary mock data.
-      // Later, replace this with fetch() calls to your Flask backend.
-      const dbData = {
-        users: {
-          label: "Users",
-          description: "Application users and their account status.",
-          columns: ["ID", "Name", "Email", "Role", "Status"],
-          rows: [
-            [1, "Alice Johnson", "alice@example.com", "Admin", "Active"],
-            [2, "Brian Lee", "brian@example.com", "Analyst", "Inactive"],
-            [3, "Carla Smith", "carla@example.com", "Developer", "Active"],
-            [4, "David Kumar", "david@example.com", "Manager", "Pending"],
-          ],
-        },
-        orders: {
-          label: "Orders",
-          description: "Recent order records from the system.",
-          columns: ["Order ID", "Customer", "Product", "Amount", "Status"],
-          rows: [
-            [1001, "Alice Johnson", "Laptop", "$1,250", "Shipped"],
-            [1002, "Brian Lee", "Monitor", "$320", "Processing"],
-            [1003, "Carla Smith", "Keyboard", "$89", "Delivered"],
-            [1004, "David Kumar", "Mouse", "$45", "Cancelled"],
-          ],
-        },
-        products: {
-          label: "Products",
-          description: "Catalog items available in inventory.",
-          columns: ["Product ID", "Name", "Category", "Price", "Stock"],
-          rows: [
-            [501, "Laptop", "Electronics", "$1,250", 14],
-            [502, "Monitor", "Electronics", "$320", 22],
-            [503, "Keyboard", "Accessories", "$89", 50],
-            [504, "Mouse", "Accessories", "$45", 67],
-          ],
-        },
+      const API = "http://localhost:5000";
+
+      // ── API call helper ──────────────────────────────────
+      async function apiFetch(path) {
+        const res = await fetch(API + path);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      }
+
+      // ── Connection check ─────────────────────────────────
+      async function checkApi() {
+        const dot = document.getElementById("api-dot");
+        const status = document.getElementById("api-status");
+        try {
+          await apiFetch("/health");
+          dot.classList.add("connected");
+          status.textContent = "API connected";
+        } catch {
+          dot.classList.remove("connected");
+          status.textContent = "API offline";
+        }
+      }
+
+      // ── Navigation ───────────────────────────────────────
+      const titles = {
+        persons: ["Persons", "GET /persons"],
+        employment: ["Employment", "GET /employment"],
+        education: ["Education", "GET /education"],
+        births: ["Birth Registrations", "GET /births"],
+        marriages: ["Marriages", "GET /marriages"],
+        parentchild: ["Family Relationships", "GET /parentchild"],
+        districts: ["Districts", "GET /districts"],
+        professions: ["Professions", "GET /professions"],
+        analytics: ["Analytics", "GET /analytics/*"],
+        // ADDED LINE: search title
+        search: ["Search Person", "GET /search"],
       };
 
-      let activeTable = "users";
+      function showSection(name, buttonEl) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("section-" + name).classList.add("active");
+        if (buttonEl) buttonEl.classList.add("active");
+        document.getElementById("page-title").textContent = titles[name][0];
+        document.getElementById("page-meta").textContent = titles[name][1];
 
-      function renderTableList() {
-        const tableList = document.getElementById("tableList");
-        tableList.innerHTML = "";
-
-        Object.entries(dbData).forEach(([key, table]) => {
-          const button = document.createElement("button");
-          button.className = `table-item ${key === activeTable ? "active" : ""}`;
-          button.innerHTML = `${table.label}<small>${table.rows.length} rows</small>`;
-          button.onclick = () => switchTable(key);
-          tableList.appendChild(button);
-        });
+        const loaders = {
+          persons: loadPersons,
+          employment: loadEmployment,
+          education: loadEducation,
+          births: loadBirths,
+          marriages: loadMarriages,
+          parentchild: loadParentChild,
+          districts: loadDistricts,
+          professions: loadProfessions,
+          analytics: loadAnalytics,
+          // ADDED LINE: search loader
+          search: () => populateDistrictDropdown(),
+        };
+        loaders[name]();
       }
 
-      function renderActiveTable() {
-        const table = dbData[activeTable];
-        const tableTitle = document.getElementById("tableTitle");
-        const tableDescription = document.getElementById("tableDescription");
-        const tableHead = document.getElementById("tableHead");
-        const tableBody = document.getElementById("tableBody");
-        const searchInput = document.getElementById("searchInput");
-        const emptyState = document.getElementById("emptyState");
+      // ── Table rendering helpers ──────────────────────────
+      function setLoading(tbodyId) {
+        document.getElementById(tbodyId).innerHTML =
+          `<tr><td colspan="99"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr>`;
+      }
 
-        tableTitle.textContent = table.label;
-        tableDescription.textContent = table.description;
-        searchInput.value = "";
-        emptyState.style.display = "none";
+      function setEmpty(tbodyId, msg = "No records found") {
+        document.getElementById(tbodyId).innerHTML =
+          `<tr><td colspan="99"><div class="empty">${msg}</div></td></tr>`;
+      }
 
-        tableHead.innerHTML = `<tr>${table.columns.map((column) => `<th>${column}</th>`).join("")}</tr>`;
-        tableBody.innerHTML = table.rows
+      function setCount(countId, n) {
+        document.getElementById(countId).textContent =
+          n + " record" + (n === 1 ? "" : "s");
+      }
+
+      function nullCell(v) {
+        return v === null || v === undefined || v === ""
+          ? `<span style="color:var(--muted);font-style:italic">—</span>`
+          : v;
+      }
+
+      function genderBadge(g) {
+        return g
+          ? `<span class="badge badge-${g}">${g === "M" ? "Male" : g === "F" ? "Female" : "Other"}</span>`
+          : nullCell(null);
+      }
+
+      function formatSalary(s) {
+        return s === null || s === undefined || s === ""
+          ? nullCell(null)
+          : "NPR " + Number(s).toLocaleString();
+      }
+
+      // ── PERSONS ─────────────────────────────────────────
+      async function loadPersons() {
+        setLoading("persons-body");
+        const g = document.getElementById("f-gender").value;
+        const c = document.getElementById("f-cit").value;
+        const d = document.getElementById("f-district").value;
+        const citizenship = document.getElementById("f-citizenship").value.trim();
+        
+        let url = "/persons?";
+        if (g) url += `gender=${g}&`;
+        if (c) url += `has_citizenship=${c}&`;
+        if (d) url += `district_id=${d}&`;
+        if (citizenship) url += `citizenship=${encodeURIComponent(citizenship)}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("persons-count", rows.length);
+          updatePersonStats(rows);
+          if (!rows.length) {
+            setEmpty("persons-body");
+            return;
+          }
+          document.getElementById("persons-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.person_id}</td>
+        <td>${r.name}</td>
+        <td>${genderBadge(r.gender)}</td>
+        <td class="mono">${nullCell(r.citizenship_no)}</td>
+        <td>${nullCell(r.district_name)}</td>
+        <td>${nullCell(r.province)}</td>
+        <td>${[r.tole, r.ward, r.municipality].filter(Boolean).join(", ") || nullCell(null)}</td>
+      </tr>`,
+            )
+            .join("");
+        } catch (e) {
+          setEmpty("persons-body", "Could not reach API. Is Flask running?");
+        }
+      }
+
+      function updatePersonStats(rows) {
+        document.getElementById("stat-total").textContent = rows.length;
+        document.getElementById("stat-male").textContent = rows.filter(
+          (r) => r.gender === "M",
+        ).length;
+        document.getElementById("stat-female").textContent = rows.filter(
+          (r) => r.gender === "F",
+        ).length;
+        document.getElementById("stat-cit").textContent = rows.filter(
+          (r) => r.citizenship_no,
+        ).length;
+      }
+
+      function resetPersons() {
+        document.getElementById("f-gender").value = "";
+        document.getElementById("f-cit").value = "";
+        document.getElementById("f-district").value = "";
+        document.getElementById("f-citizenship").value = "";
+
+        loadPersons();
+      }
+
+      // ── EMPLOYMENT ──────────────────────────────────────
+      async function loadEmployment() {
+        setLoading("employment-body");
+        const min = document.getElementById("f-min-sal").value;
+        const max = document.getElementById("f-max-sal").value;
+        const pid = document.getElementById("f-emp-person").value;
+        let url = "/employment?";
+        if (min) url += `min_salary=${min}&`;
+        if (max) url += `max_salary=${max}&`;
+        if (pid) url += `person_id=${pid}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("employment-count", rows.length);
+          if (!rows.length) {
+            setEmpty("employment-body");
+            return;
+          }
+          document.getElementById("employment-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.emp_id}</td>
+        <td>${r.person_name}</td>
+        <td>${r.organization}</td>
+        <td>${r.profession_name}</td>
+        <td class="mono" style="color:var(--accent)">${formatSalary(r.salary)}</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("employment-body", "Could not reach API.");
+        }
+      }
+
+      function resetEmployment() {
+        ["f-min-sal", "f-max-sal", "f-emp-person"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        loadEmployment();
+      }
+
+      // ── EDUCATION ───────────────────────────────────────
+      async function loadEducation() {
+        setLoading("education-body");
+        const level = document.getElementById("f-edu-level").value;
+        const pid = document.getElementById("f-edu-person").value;
+        let url = "/education?";
+        if (level) url += `level=${level}&`;
+        if (pid) url += `person_id=${pid}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("education-count", rows.length);
+          if (!rows.length) {
+            setEmpty("education-body");
+            return;
+          }
+          document.getElementById("education-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.education_id}</td>
+        <td>${r.person_name}</td>
+        <td>${r.degree_name}</td>
+        <td><span class="badge badge-O">${r.level}</span></td>
+        <td>${r.institution_name}</td>
+        <td class="mono">${r.years_completed} yr</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("education-body", "Could not reach API.");
+        }
+      }
+
+      function resetEducation() {
+        document.getElementById("f-edu-level").value = "";
+        document.getElementById("f-edu-person").value = "";
+        loadEducation();
+      }
+
+      // ── BIRTHS ──────────────────────────────────────────
+      async function loadBirths() {
+        setLoading("births-body");
+        const orphans = document.getElementById("f-orphans").value;
+        const child = document.getElementById("f-birth-child").value;
+        let url = "/births?";
+        if (orphans) url += `orphans=${orphans}&`;
+        if (child) url += `child_id=${child}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("births-count", rows.length);
+          if (!rows.length) {
+            setEmpty("births-body");
+            return;
+          }
+          document.getElementById("births-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.birth_id}</td>
+        <td>${r.child_name}</td>
+        <td class="mono">${r.birth_date ? r.birth_date.split("T")[0] : "—"}</td>
+        <td>${nullCell(r.mother_name)}</td>
+        <td>${nullCell(r.father_name)}</td>
+        <td>${r.ward_office}</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("births-body", "Could not reach API.");
+        }
+      }
+
+      function resetBirths() {
+        document.getElementById("f-orphans").value = "";
+        document.getElementById("f-birth-child").value = "";
+        loadBirths();
+      }
+
+      // ── MARRIAGES ───────────────────────────────────────
+      async function loadMarriages() {
+        setLoading("marriages-body");
+        const pid = document.getElementById("f-mar-person").value;
+        let url = "/marriages?";
+        if (pid) url += `person_id=${pid}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("marriages-count", rows.length);
+          if (!rows.length) {
+            setEmpty("marriages-body");
+            return;
+          }
+          document.getElementById("marriages-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.marriage_id}</td>
+        <td>${r.person1_name}</td>
+        <td>${r.person2_name}</td>
+        <td class="mono">${r.marriage_date ? r.marriage_date.split("T")[0] : "—"}</td>
+        <td>${r.ward_office}</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("marriages-body", "Could not reach API.");
+        }
+      }
+
+      function resetMarriages() {
+        document.getElementById("f-mar-person").value = "";
+        loadMarriages();
+      }
+
+      // ── PARENT-CHILD ─────────────────────────────────────
+      async function loadParentChild() {
+        setLoading("parentchild-body");
+        const rel = document.getElementById("f-relation").value;
+        const bio = document.getElementById("f-bio").value;
+        let url = "/parentchild?";
+        if (rel) url += `relation_type=${rel}&`;
+        if (bio) url += `is_biological=${bio}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("parentchild-count", rows.length);
+          if (!rows.length) {
+            setEmpty("parentchild-body");
+            return;
+          }
+          document.getElementById("parentchild-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.relation_id}</td>
+        <td>${r.child_name}</td>
+        <td>${r.parent_name}</td>
+        <td><span class="badge badge-O">${r.relation_type}</span></td>
+        <td>${
+          r.is_biological
+            ? '<span class="badge badge-yes">Biological</span>'
+            : '<span class="badge badge-no">Non-biological</span>'
+        }</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("parentchild-body", "Could not reach API.");
+        }
+      }
+
+      function resetParentChild() {
+        document.getElementById("f-relation").value = "";
+        document.getElementById("f-bio").value = "";
+        loadParentChild();
+      }
+
+      // ── DISTRICTS ───────────────────────────────────────
+      async function loadDistricts() {
+        setLoading("districts-body");
+        const prov = document.getElementById("f-province").value;
+        let url = "/districts?";
+        if (prov) url += `province=${encodeURIComponent(prov)}&`;
+
+        try {
+          const res = await apiFetch(url);
+          const rows = res.data;
+          setCount("districts-count", rows.length);
+          if (!rows.length) {
+            setEmpty("districts-body");
+            return;
+          }
+          document.getElementById("districts-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.district_id}</td>
+        <td>${r.district_name}</td>
+        <td>${r.province}</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("districts-body", "Could not reach API.");
+        }
+      }
+
+      function resetDistricts() {
+        document.getElementById("f-province").value = "";
+        loadDistricts();
+      }
+
+      // ── PROFESSIONS ─────────────────────────────────────
+      async function loadProfessions() {
+        setLoading("professions-body");
+        try {
+          const res = await apiFetch("/professions");
+          const rows = res.data;
+          setCount("professions-count", rows.length);
+          if (!rows.length) {
+            setEmpty("professions-body");
+            return;
+          }
+          document.getElementById("professions-body").innerHTML = rows
+            .map(
+              (r) => `
+      <tr>
+        <td class="mono">${r.profession_id}</td>
+        <td>${r.profession_name}</td>
+      </tr>`,
+            )
+            .join("");
+        } catch {
+          setEmpty("professions-body", "Could not reach API.");
+        }
+      }
+
+      // ── ANALYTICS ───────────────────────────────────────
+      async function loadAnalytics() {
+        loadGender();
+        loadSalaryStats();
+        loadAgeGroups();
+        loadProvincePopulation();
+        loadOrphans();
+        loadRemarried();
+        loadUnemployed();
+        // ADDED: load two charts
+        loadSalaryChart();
+        loadAgeChart();
+      }
+
+      async function loadGender() {
+        try {
+          const res = await apiFetch("/analytics/gender-count");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-gender").innerHTML =
+              '<div class="empty">No data available</div>';
+            return;
+          }
+          const total = rows.reduce((s, r) => s + r.total, 0) || 1;
+          const labels = { M: "Male", F: "Female", O: "Other" };
+          document.getElementById("ana-gender").innerHTML = rows
+            .map(
+              (r) => `
+      <div class="ana-row">
+        <span>${labels[r.gender] || r.gender}</span>
+        <span class="aval">${r.total}</span>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-bg"><div class="bar-fill" style="width:${Math.round((r.total / total) * 100)}%"></div></div>
+      </div>`,
+            )
+            .join("");
+        } catch {
+          document.getElementById("ana-gender").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadSalaryStats() {
+        try {
+          const res = await apiFetch("/analytics/salary-stats");
+          const r = res.data[0];
+          if (!r) {
+            document.getElementById("ana-salary").innerHTML =
+              '<div class="empty">No data available</div>';
+            return;
+          }
+          document.getElementById("ana-salary").innerHTML = `
+      <div class="salary-grid">
+        <div class="salary-stat"><div class="sl">Average</div><div class="sv">NPR ${Math.round(r.avg_salary).toLocaleString()}</div></div>
+        <div class="salary-stat"><div class="sl">Maximum</div><div class="sv">NPR ${Number(r.max_salary).toLocaleString()}</div></div>
+        <div class="salary-stat"><div class="sl">Minimum</div><div class="sv">NPR ${Number(r.min_salary).toLocaleString()}</div></div>
+        <div class="salary-stat"><div class="sl">Total payroll</div><div class="sv">NPR ${Math.round(r.total_salary).toLocaleString()}</div></div>
+      </div>`;
+        } catch {
+          document.getElementById("ana-salary").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadAgeGroups() {
+        try {
+          const res = await apiFetch("/analytics/age-groups");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-age").innerHTML =
+              '<div class="empty">No data available</div>';
+            return;
+          }
+          const max = Math.max(...rows.map((r) => r.total), 1);
+          document.getElementById("ana-age").innerHTML = rows
+            .map(
+              (r) => `
+      <div class="ana-row">
+        <span>${r.age_group} years</span>
+        <span class="aval">${r.total}</span>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-bg"><div class="bar-fill" style="width:${Math.round((r.total / max) * 100)}%"></div></div>
+      </div>`,
+            )
+            .join("");
+        } catch {
+          document.getElementById("ana-age").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadProvincePopulation() {
+        try {
+          const res = await apiFetch("/analytics/province-population");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-province").innerHTML =
+              '<div class="empty">No data available</div>';
+            return;
+          }
+          const max = Math.max(...rows.map((r) => r.total), 1);
+          document.getElementById("ana-province").innerHTML = rows
+            .map(
+              (r) => `
+      <div class="ana-row">
+        <span>${r.province}</span>
+        <span class="aval">${r.total}</span>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-bg"><div class="bar-fill" style="width:${Math.round((r.total / max) * 100)}%"></div></div>
+      </div>`,
+            )
+            .join("");
+        } catch {
+          document.getElementById("ana-province").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadOrphans() {
+        try {
+          const res = await apiFetch("/analytics/orphans");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-orphans").innerHTML =
+              '<div class="empty">No orphan records</div>';
+            return;
+          }
+          document.getElementById("ana-orphans").innerHTML = rows
+            .map(
+              (r) => `
+      <div class="ana-row">
+        <span>${r.name}</span>
+        <span class="mono">${r.birth_date ? r.birth_date.split("T")[0] : "—"}</span>
+      </div>`,
+            )
+            .join("");
+        } catch {
+          document.getElementById("ana-orphans").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadRemarried() {
+        try {
+          const res = await apiFetch("/analytics/remarried");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-remarried").innerHTML =
+              '<div class="empty">No remarried records</div>';
+            return;
+          }
+          document.getElementById("ana-remarried").innerHTML = rows
+            .map(
+              (r) => `
+      <div class="ana-row">
+        <span>${r.name}</span>
+        <span class="aval">${r.times_married}×</span>
+      </div>`,
+            )
+            .join("");
+        } catch {
+          document.getElementById("ana-remarried").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
+      }
+
+      async function loadUnemployed() {
+        try {
+          const res = await apiFetch("/analytics/unemployed");
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("ana-unemployed").innerHTML =
+              '<div class="empty">Everyone is employed!</div>';
+            return;
+          }
+          document.getElementById("ana-unemployed").innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+        ${rows
           .map(
-            (row) =>
-              `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`,
+            (r) => `
+          <div style="background:var(--bg3);border-radius:8px;padding:10px 14px">
+            <div style="font-size:13px">${r.name}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${r.gender === "M" ? "Male" : r.gender === "F" ? "Female" : "Other"} · ${r.district_name || "—"}</div>
+          </div>`,
           )
-          .join("");
+          .join("")}
+      </div>`;
+        } catch {
+          document.getElementById("ana-unemployed").innerHTML =
+            '<div class="empty">API offline</div>';
+        }
       }
 
-      function switchTable(tableName) {
-        activeTable = tableName;
-        renderTableList();
-        renderActiveTable();
+      // ADDED LINES: Chart variables, chart functions, search functions
+      let salaryChart = null;
+      let ageChart    = null;
+
+      async function loadSalaryChart() {
+        try {
+          const res  = await apiFetch("/analytics/salary-by-profession");
+          const rows = res.data;
+          const ctx  = document.getElementById("chart-salary").getContext("2d");
+          if (salaryChart) salaryChart.destroy();
+          salaryChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels:   rows.map(r => r.profession_name),
+              datasets: [{ label: "Avg Salary (NPR)", data: rows.map(r => r.avg_salary),
+                backgroundColor: "rgba(144,164,180,0.6)", borderColor: "rgba(144,164,180,1)",
+                borderWidth: 1, borderRadius: 4 }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } },
+              scales: {
+                x: { ticks: { color: "#a0a9b3", font: { size: 10 }, maxRotation: 45 },
+                     grid: { color: "rgba(255,255,255,0.05)" } },
+                y: { ticks: { color: "#a0a9b3", font: { size: 10 },
+                              callback: v => "NPR " + v.toLocaleString() },
+                     grid: { color: "rgba(255,255,255,0.05)" } }
+              }
+            }
+          });
+        } catch { console.error("Salary chart failed"); }
       }
 
-      function filterTable() {
-        const input = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
-        const rows = document.querySelectorAll("#tableBody tr");
-        const emptyState = document.getElementById("emptyState");
-        let visibleCount = 0;
-
-        rows.forEach((row) => {
-          const text = row.textContent.toLowerCase();
-          const match = text.includes(input);
-          row.style.display = match ? "" : "none";
-          if (match) visibleCount++;
-        });
-
-        emptyState.style.display = visibleCount === 0 ? "block" : "none";
+      async function loadAgeChart() {
+        try {
+          const res  = await apiFetch("/analytics/age-groups");
+          const rows = res.data;
+          const ctx  = document.getElementById("chart-age").getContext("2d");
+          if (ageChart) ageChart.destroy();
+          ageChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+              labels:   rows.map(r => r.age_group + " yrs"),
+              datasets: [{ data: rows.map(r => r.total),
+                backgroundColor: ["rgba(127,165,144,0.8)","rgba(144,164,180,0.8)",
+                                  "rgba(232,201,125,0.8)","rgba(191,138,132,0.8)"],
+                borderColor: "rgba(255,255,255,0.1)", borderWidth: 1 }]
+            },
+            options: { responsive: true,
+              plugins: { legend: { position: "bottom",
+                labels: { color: "#a0a9b3", font: { size: 11 }, padding: 12 } } }
+            }
+          });
+        } catch { console.error("Age chart failed"); }
       }
 
-      document
-        .getElementById("searchInput")
-        .addEventListener("keyup", filterTable);
+      async function populateDistrictDropdown() {
+        try {
+          const res = await apiFetch("/districts");
+          const sel = document.getElementById("s-district");
+          if (sel.options.length > 1) return;
+          res.data.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.district_id;
+            opt.textContent = d.district_name;
+            sel.appendChild(opt);
+          });
+        } catch {}
+      }
 
-      // Example Flask integration for later:
-      // async function loadTables() {
-      //   const response = await fetch('/api/tables');
-      //   const tables = await response.json();
-      // }
-      //
-      // async function loadTableData(tableName) {
-      //   const response = await fetch(`/api/table/${tableName}`);
-      //   const table = await response.json();
-      // }
+      async function doSearch() {
+        const name         = document.getElementById("s-name").value.trim();
+        const citizenship  = document.getElementById("s-citizenship").value.trim();
+        const district_id  = document.getElementById("s-district").value;
+        const municipality = document.getElementById("s-municipality").value.trim();
+        if (!name && !citizenship && !district_id && !municipality) {
+          document.getElementById("search-results").innerHTML =
+            '<div class="empty">Please enter at least one search field.</div>';
+          return;
+        }
+        document.getElementById("search-results").innerHTML =
+          '<div class="empty">Searching...</div>';
+        document.getElementById("profile-panel").style.display = "none";
+        let url = "/search?";
+        if (name)         url += `name=${encodeURIComponent(name)}&`;
+        if (citizenship)  url += `citizenship=${encodeURIComponent(citizenship)}&`;
+        if (district_id)  url += `district_id=${district_id}&`;
+        if (municipality) url += `municipality=${encodeURIComponent(municipality)}&`;
+        try {
+          const res  = await apiFetch(url);
+          const rows = res.data;
+          if (!rows.length) {
+            document.getElementById("search-results").innerHTML =
+              '<div class="empty">No persons found matching your search.</div>';
+            return;
+          }
+          document.getElementById("search-results").innerHTML = `
+            <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">
+              ${rows.length} result${rows.length > 1 ? "s" : ""} found — click a row to view full profile
+            </div>
+            <div class="table-wrap"><div class="table-scroll"><table>
+              <thead><tr>
+                <th>ID</th><th>Name</th><th>Gender</th>
+                <th>Citizenship No</th><th>Municipality</th>
+                <th>Ward</th><th>District</th><th>Province</th>
+              </tr></thead>
+              <tbody>
+                ${rows.map(r => `
+                  <tr style="cursor:pointer" onclick="loadProfile(${r.person_id})"
+                      onmouseover="this.style.background='var(--bg3)'"
+                      onmouseout="this.style.background=''">
+                    <td class="mono">${r.person_id}</td>
+                    <td><strong>${r.name}</strong></td>
+                    <td>${genderBadge(r.gender)}</td>
+                    <td class="mono">${nullCell(r.citizenship_no)}</td>
+                    <td>${nullCell(r.municipality)}</td>
+                    <td>${nullCell(r.ward)}</td>
+                    <td>${nullCell(r.district_name)}</td>
+                    <td>${nullCell(r.province)}</td>
+                  </tr>`).join("")}
+              </tbody>
+            </table></div></div>`;
+        } catch {
+          document.getElementById("search-results").innerHTML =
+            '<div class="empty">Could not reach API.</div>';
+        }
+      }
 
-      renderTableList();
-      renderActiveTable();
+      async function loadProfile(person_id) {
+        document.getElementById("profile-panel").style.display = "block";
+        document.getElementById("profile-content").innerHTML =
+          '<div class="empty">Loading profile...</div>';
+        try {
+          const res = await apiFetch(`/search/${person_id}/full`);
+          const p   = res.person;
+          const emp = res.employment;
+          const edu = res.education;
+          const br  = res.birth;
+          const mar = res.marriages;
+          const ch  = res.children;
+          const par = res.parents;
+          document.getElementById("profile-content").innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <div>
+                <div style="font-family:var(--font-head);font-size:22px;">${p.name}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px;">
+                  ${p.gender==="M"?"Male":p.gender==="F"?"Female":"Other"} · 
+                  ${p.district_name||"—"} · 
+                  ${p.citizenship_no?`<span class="mono">${p.citizenship_no}</span>`
+                    :'<span style="color:var(--danger)">No citizenship</span>'}
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);">
+                person_id: ${p.person_id}
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+              <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Address</div>
+                <div style="font-size:13px;">${p.municipality||"—"}</div>
+                <div style="font-size:12px;color:var(--muted);">Ward ${p.ward||"—"}, ${p.tole||"—"}</div>
+                <div style="font-size:12px;color:var(--muted);">${p.district_name||"—"}, ${p.province||"—"}</div>
+              </div>
+              <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Birth Record</div>
+                ${br?`<div style="font-size:13px;">${br.birth_date?br.birth_date.split("T")[0]:"—"}</div>
+                  <div style="font-size:12px;color:var(--muted);">Mother: ${br.mother_name||"<em>Unknown</em>"}</div>
+                  <div style="font-size:12px;color:var(--muted);">Father: ${br.father_name||"<em>Unknown</em>"}</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:4px;">${br.ward_office||"—"}</div>`
+                :'<div style="color:var(--muted);font-size:12px;">No birth record</div>'}
+              </div>
+              <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Employment</div>
+                ${emp.length?emp.map(e=>`
+                  <div style="font-size:13px;">${e.profession_name}</div>
+                  <div style="font-size:12px;color:var(--muted);">${e.organization}</div>
+                  <div style="font-size:12px;color:var(--success);">NPR ${Number(e.salary).toLocaleString()}</div>
+                `).join(""):'<div style="color:var(--danger);font-size:12px;">Unemployed</div>'}
+              </div>
+              <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Education</div>
+                ${edu.length?edu.map(e=>`
+                  <div style="font-size:12px;margin-bottom:6px;">
+                    <span style="color:var(--accent)">${e.level}</span> — ${e.degree_name}
+                    <div style="font-size:11px;color:var(--muted);">${e.institution_name}</div>
+                  </div>
+                `).join(""):'<div style="color:var(--muted);font-size:12px;">No education record</div>'}
+              </div>
+              <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Marriage</div>
+                ${mar.length?mar.map(m=>`
+                  <div style="font-size:12px;margin-bottom:6px;">
+                    ${m.person1_name} & ${m.person2_name}
+                    <div style="font-size:11px;color:var(--muted);">${m.marriage_date?m.marriage_date.split("T")[0]:"—"}</div>
+                  </div>
+                `).join(""):'<div style="color:var(--muted);font-size:12px;">Never married</div>'}
+              </div>
+              <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Family</div>
+                ${par.length?`<div style="font-size:11px;color:var(--muted);">Parents</div>
+                  ${par.map(p=>`<div style="font-size:12px;">${p.parent_name}
+                    <span style="color:var(--muted)">(${p.relation_type}${!p.is_biological?" · non-bio":""})</span>
+                  </div>`).join("")}`:""}
+                ${ch.length?`<div style="font-size:11px;color:var(--muted);margin-top:8px;">Children</div>
+                  ${ch.map(c=>`<div style="font-size:12px;">${c.child_name}
+                    <span style="color:var(--muted)">(${c.relation_type})</span>
+                  </div>`).join("")}`:""}
+                ${!par.length&&!ch.length?'<div style="color:var(--muted);font-size:12px;">No family records</div>':""}
+              </div>
+            </div>`;
+        } catch {
+          document.getElementById("profile-content").innerHTML =
+            '<div class="empty">Could not load profile.</div>';
+        }
+      }
+
+      function resetSearch() {
+        document.getElementById("s-name").value         = "";
+        document.getElementById("s-citizenship").value  = "";
+        document.getElementById("s-district").value     = "";
+        document.getElementById("s-municipality").value = "";
+        document.getElementById("search-results").innerHTML  = "";
+        document.getElementById("profile-panel").style.display = "none";
+      }
+
+      // ── INIT ────────────────────────────────────────────
+      checkApi();
+      loadPersons();
     </script>
   </body>
 </html>
