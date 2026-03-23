@@ -1,5 +1,5 @@
 
-INSERT INTO Employment(organization, salary, person_id, profession_id) VALUES
+INSERT IGNORE INTO Employment(organization, salary, person_id, profession_id) VALUES
  
 
  

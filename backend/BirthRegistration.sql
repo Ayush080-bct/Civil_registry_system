@@ -1,6 +1,6 @@
 
  
-INSERT INTO BirthRegistration(birth_date, ward_office, child_id, mother_id, father_id) VALUES
+INSERT IGNORE INTO BirthRegistration(birth_date, ward_office, child_id, mother_id, father_id) VALUES
  
 
 ('1985-04-12', 'Kathmandu Ward 10 Office',   1,  NULL, NULL),

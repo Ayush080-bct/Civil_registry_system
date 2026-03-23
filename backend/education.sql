@@ -1,5 +1,5 @@
 
-INSERT INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
+INSERT IGNORE INTO Education(degree_name, level, institution_name, years_completed, person_id) VALUES
  
 ('SLC',              'Secondary', 'Kathmandu Secondary School',       10, 1),
 ('B.Ed',             'Bachelor',  'Tribhuvan University Kirtipur',     4, 1),

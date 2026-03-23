@@ -1,6 +1,6 @@
 
  
-INSERT INTO ParentChild(child_id, parent_id, relation_type, is_biological) VALUES
+INSERT IGNORE INTO ParentChild(child_id, parent_id, relation_type, is_biological) VALUES
  
 
 (9,   1, 'father', TRUE),

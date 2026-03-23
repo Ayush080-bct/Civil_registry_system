@@ -200,3 +200,8 @@ join birthregistration br on p.person_id=br.child_id
 join employment e on p.person_id=e.person_id
 join profession pr on e.profession_id=pr.profession_id
 HAVING age>60;
+
+SELECT DISTINCT salary
+FROM employment
+ORDER BY salary DESC
+LIMIT 1 OFFSET 4;
